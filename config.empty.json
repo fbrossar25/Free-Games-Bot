@@ -1,4 +1,5 @@
 {
   "prefix":"!",
-  "token": "CLIENT-TOKEN-ON-DISCORD-DEV-PORTAL"
+  "token": "CLIENT-TOKEN-ON-DISCORD-DEV-PORTAL",
+  "weeklyChannelId": "CHANNEL-ID-FOR-WEEKLY-POST"
 }
