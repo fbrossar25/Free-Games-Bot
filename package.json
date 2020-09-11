@@ -26,7 +26,6 @@
   "homepage": "https://github.com/fbrossar25/Free-Games-Bot#readme",
   "dependencies": {
     "discord.js": "^12.3.1",
-    "dotenv": "^8.2.0",
     "eslint": "^7.8.1"
   }
 }
