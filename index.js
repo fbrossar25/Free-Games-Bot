@@ -1,14 +1,16 @@
 const Discord = require('discord.js');
 const Scheduler = require('node-schedule');
+const Utils = require('./utils');
+const Games = require('./fetch-free-games');
+
 const { prefix, token, gamesChannelId, gamesCron } = require('./config.json');
 const client = new Discord.Client();
 const cronJobs = {};
-const dateOptions = { month: 'numeric', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     if(typeof gamesChannelId === 'string') {
-        client.channels.fetch(gamesChannelId).then(channel => schedule(channel));
+        // client.channels.fetch(gamesChannelId).then(channel => schedule(channel));
     }
 });
 
@@ -61,7 +63,7 @@ function nextSchedule(channel) {
         date = cronJobs[channel.id].nextInvocation();
     }
     if(date) {
-        channel.send(`Next notifications will be on ${getDateString(date.toDate())}`);
+        channel.send(`Next notifications will be on ${Utils.getDateString(date.toDate())}`);
     }
     else{
         channel.send('I\'ve got nothing planned out there');
@@ -72,7 +74,7 @@ function cancelSchedule(channel) {
     if(cronJobs[channel.id]) {
         cronJobs[channel.id].cancel();
         channel.send('All scheduled tasks ar now canceled for this channel, my job here is done !');
-        log(`Scheduled task cancelled for channel ${channel.name} (${channel.id})`);
+        Utils.log(`Scheduled task cancelled for channel ${channel.name} (${channel.id})`);
     }
     else{
         channel.send('Nothing scheduled on this channel');
@@ -91,19 +93,29 @@ function schedule(channel, cron = gamesCron) {
 
 function fetchFreeGamesList(channel, args) {
     if(channel) {
-        log(`Fetching games for channel ${channel.name} (${channel.id})`);
-        const messageToSend = `WIP : will search free games on ${Array.isArray(args) ? args.join() : 'Epic Games Store'}`;
-        channel.send(messageToSend);
+        Games.fetch().then((result) => {
+            Utils.log(`Fetching games for channel ${channel.name} (${channel.id})`);
+            // Utils.log(`Result : ${JSON.stringify(result)}`);
+            if(result.games.length === 0) {
+                channel.send('@everyone No free games for today :(');
+            }
+            else{
+                channel.send('@everyone Free games this week !');
+                for(const game of result.games) {
+                    channel.send(`${game.name} ${game.url}`);
+                }
+            }
+
+            if(result.errors.length > 0) {
+                const sources = [];
+                for(const error of result.errors) {
+                    sources.push(error.source);
+                }
+                channel.send(`Sadly, I was unable to get games from those sites : ${sources.join()}`);
+            }
+        });
     }
     else {
-        log('Cannot fetch games -> channel null or undefined');
+        Utils.log('Cannot fetch games -> channel null or undefined');
     }
-}
-
-function log(msg) {
-    console.log(`${getDateString()} - ${msg}`);
-}
-
-function getDateString(date = new Date()) {
-    return date.toLocaleDateString('en-EN', dateOptions);
 }
