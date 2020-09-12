@@ -1,6 +1,0 @@
-{
-  "prefix":"!",
-  "token": "CLIENT-TOKEN-ON-DISCORD-DEV-PORTAL",
-  "gamesChannelId": "CHANNEL-ID-FOR-WEEKLY-POST",
-  "gamesCron": "0 9 * * THU"
-}

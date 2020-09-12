@@ -3,14 +3,17 @@ const Scheduler = require('node-schedule');
 const Utils = require('./utils');
 const Games = require('./fetch-free-games');
 
-const { prefix, token, gamesChannelId, gamesCron } = require('./config.json');
+const prefix = process.env.PREFIX;
+const token = process.env.TOKEN;
+const gamesChannelsIds = process.env.CHANNELS_IDS.split(',');
+const gamesCron = process.env.GAMES_CRON;
 const client = new Discord.Client();
 const cronJobs = {};
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
-    if(typeof gamesChannelId === 'string') {
-        // client.channels.fetch(gamesChannelId).then(channel => schedule(channel));
+    if(Array.isArray(gamesChannelsIds)) {
+        gamesChannelsIds.forEach((chanId) => client.channels.fetch(chanId).then(channel => schedule(channel, gamesCron, false)));
     }
 });
 
@@ -81,14 +84,24 @@ function cancelSchedule(channel) {
     }
 }
 
-function schedule(channel, cron = gamesCron) {
-    if(cronJobs[channel.id]) {
-        cronJobs[channel.id].reschedule(gamesCron);
+function schedule(channel, cron = gamesCron, announce = true) {
+    let job = cronJobs[channel.id];
+    if(job) {
+        job.reschedule(gamesCron);
     }
     else{
-        cronJobs[channel.id] = Scheduler.scheduleJob(cron, () => fetchFreeGamesList(channel));
+        job = Scheduler.scheduleJob(cron, () => fetchFreeGamesList(channel));
+        cronJobs[channel.id] = job;
     }
-    nextSchedule(channel);
+    if(job) {
+        Utils.log(`Scheduled notifications on ${channel.guild.name}#${channel.name} (${channel.id}), next one on ${Utils.getDateString(job.nextInvocation().toDate())}`);
+    }
+    else {
+        Utils.log(`Unable to schedule notifications on ${channel.guild.name}#${channel.name} (${channel.id})`);
+    }
+    if(announce) {
+        nextSchedule(channel);
+    }
 }
 
 function fetchFreeGamesList(channel, args) {

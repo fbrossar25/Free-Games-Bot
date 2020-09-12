@@ -1,11 +1,11 @@
-const dateOptions = { month: 'numeric', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+const moment = require('moment');
 
 module.exports.log = (msg) => {
     console.log(`${getDateString()} - ${msg}`);
 };
 
 function getDateString(date = new Date()) {
-    return date.toLocaleDateString('en-EN', dateOptions);
+    return moment(date).format('DD/MM/YYYY @ HH:mm:ss');
 }
 
 module.exports.getDateString = getDateString;
