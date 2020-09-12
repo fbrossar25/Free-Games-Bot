@@ -4,7 +4,8 @@
   "description": "Free games bot for discord",
   "main": "index.js",
   "scripts": {
-    "start": "heroku local",
+    "start": "node index.js",
+    "local": "heroku local",
     "dev": "nodemon --inspect index.js",
     "stop-online": "heroku ps:scale web=0",
     "start-online": "heroku ps:scale web=1"
