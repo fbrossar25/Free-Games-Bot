@@ -6,19 +6,24 @@ const Games = require('./fetch-free-games');
 const prefix = process.env.PREFIX;
 const token = process.env.TOKEN;
 const gamesChannelsIds = process.env.CHANNELS_IDS.split(',');
+const gamesChannelsIdsToSchedule = process.env.CHANNELS_IDS_TO_SCHEDULE.split(',');
 const gamesCron = process.env.GAMES_CRON;
 const client = new Discord.Client();
 const cronJobs = {};
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
-    if(Array.isArray(gamesChannelsIds)) {
-        gamesChannelsIds.forEach((chanId) => client.channels.fetch(chanId).then(channel => schedule(channel, gamesCron, false)));
+    if(Array.isArray(gamesChannelsIds) && Array.isArray(gamesChannelsIdsToSchedule)) {
+        gamesChannelsIdsToSchedule.forEach((chanId) => {
+            if(gamesChannelsIds.includes(chanId)) {
+                client.channels.fetch(chanId).then(channel => schedule(channel, gamesCron, false));
+            }
+        });
     }
 });
 
 client.on('message', (msg) => {
-    if (msg.content.startsWith(prefix)) {
+    if(gamesChannelsIds.includes(msg.channel.id) && msg.content.startsWith(prefix)) {
         command(parseCommand(msg));
     }
 });
@@ -77,7 +82,7 @@ function cancelSchedule(channel) {
     if(cronJobs[channel.id]) {
         cronJobs[channel.id].cancel();
         channel.send('All scheduled tasks ar now canceled for this channel, my job here is done !');
-        Utils.log(`Scheduled task cancelled for channel ${channel.name} (${channel.id})`);
+        Utils.log(`Scheduled task cancelled for channel ${channel.guild.name}#${channel.name} (${channel.id})`);
     }
     else{
         channel.send('Nothing scheduled on this channel');
