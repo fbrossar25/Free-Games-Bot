@@ -3,9 +3,14 @@
 Bot for discord that fetch free games with a schelued tasks using cron expression and posting into specified channels. This bots will 
 
 ## Installation
-Uses [heroku](https://heroku.com/) to deploy, or you may use [dotenv](https://www.npmjs.com/package/dotenv) package in order to read .env file on startup.
-
-Uses disordJS to post messages and wait for commands
+```bash
+npm install
+```
+Depedencies :
+- [heroku](https://heroku.com/) to deploy, and [dotenv](https://www.npmjs.com/package/dotenv) package in order to read .env file on startup, allowing debugging
+- [discordJS](https://discord.js.org/?source=post_page---------------------------#/) to post messages and wait for commands
+- [moment](https://momentjs.com/) to ease date formatting
+- [node-schedule](https://www.npmjs.com/package/node-schedule) to schedule notifications using cron expressions
 
 ## How to add this bot in discord
 First, [follow this guide](https://discordjs.guide/).
