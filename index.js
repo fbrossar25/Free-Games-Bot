@@ -2,17 +2,19 @@ const Discord = require('discord.js');
 const Scheduler = require('node-schedule');
 const Utils = require('./utils');
 const Games = require('./fetch-free-games');
+require('dotenv').config();
 
 const prefix = process.env.PREFIX;
 const token = process.env.TOKEN;
 const gamesChannelsIds = process.env.CHANNELS_IDS.split(',');
 const gamesChannelsIdsToSchedule = process.env.CHANNELS_IDS_TO_SCHEDULE.split(',');
 const gamesCron = process.env.GAMES_CRON;
+const commandName = process.env.COMMAND;
 const client = new Discord.Client();
 const cronJobs = {};
 
 client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+    Utils.log(`Logged in as ${client.user.tag}!`);
     if(Array.isArray(gamesChannelsIds) && Array.isArray(gamesChannelsIdsToSchedule)) {
         gamesChannelsIdsToSchedule.forEach((chanId) => {
             if(gamesChannelsIds.includes(chanId)) {
@@ -23,7 +25,7 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
-    if(gamesChannelsIds.includes(msg.channel.id) && msg.content.startsWith(prefix)) {
+    if(gamesChannelsIds.includes(msg.channel.id) && msg.content.startsWith(prefix + commandName)) {
         command(parseCommand(msg));
     }
 });
@@ -31,7 +33,7 @@ client.on('message', (msg) => {
 client.login(token);
 
 function parseCommand(msg) {
-    const args = msg.content.slice(prefix.length).trim().split(' ');
+    const args = msg.content.slice(prefix.length).trim().replace(/\s+/g, ' ').split(' ');
     args.map(element => element.toLowerCase());
     const name = args.shift();
     return {
@@ -44,23 +46,34 @@ function parseCommand(msg) {
 
 function command(cmd) {
     switch (cmd.name) {
-    case 'ping': ping(cmd.channel); break;
     case 'games': games(cmd.channel, cmd.args); break;
-    default: console.log(`Unknown command '${cmd.name}' received with args : ${cmd.args} `);
+    default: unknownCommand(cmd.channel, cmd.name, cmd.args);
     }
 }
 
+function unknownCommand(channel, cmdName, cmdArgs) {
+    channel.send(`I don't know the command '${cmdName}' with those arguments : ${cmdArgs}`);
+    Utils.log(`Unknown command '${cmdName}' received with args : ${cmdArgs}`);
+}
+
 function ping(channel) {
-    channel.send('Pong!');
+    channel.send('https://tenor.com/view/hello-there-gif-9442662');
 }
 
 function games(channel, args) {
     if(Array.isArray(args)) {
         switch(args[0]) {
-        case 'schedule': schedule(channel); break;
+        case 'ping': ping(channel); break;
+        case 'schedule': {
+            const cron = args.slice(1).join(' ').trim();
+            schedule(channel, cron.length > 0 ? cron : gamesCron);
+            break;
+        }
         case 'cancel': cancelSchedule(channel); break;
         case 'next': nextSchedule(channel); break;
-        default: fetchFreeGamesList(channel, args);
+        case null:
+        case undefined: fetchFreeGamesList(channel, args); break;
+        default: unknownCommand(channel, args[0], args.slice(1));
         }
     }
 }
@@ -92,17 +105,16 @@ function cancelSchedule(channel) {
 function schedule(channel, cron = gamesCron, announce = true) {
     let job = cronJobs[channel.id];
     if(job) {
-        job.reschedule(gamesCron);
+        job.cancel();
     }
-    else{
-        job = Scheduler.scheduleJob(cron, () => fetchFreeGamesList(channel));
-        cronJobs[channel.id] = job;
-    }
+    job = Scheduler.scheduleJob(cron, () => fetchFreeGamesList(channel));
+    cronJobs[channel.id] = job;
     if(job) {
         Utils.log(`Scheduled notifications on ${channel.guild.name}#${channel.name} (${channel.id}), next one on ${Utils.getDateString(job.nextInvocation().toDate())}`);
     }
     else {
-        Utils.log(`Unable to schedule notifications on ${channel.guild.name}#${channel.name} (${channel.id})`);
+        Utils.log(`Unable to schedule notifications on ${channel.guild.name}#${channel.name} (${channel.id}), rescheduling to default`);
+        schedule(channel, gamesCron);
     }
     if(announce) {
         nextSchedule(channel);
@@ -131,6 +143,8 @@ function fetchFreeGamesList(channel, args) {
                 }
                 channel.send(`Sadly, I was unable to get games from those sites : ${sources.join()}`);
             }
+
+            nextSchedule(channel);
         });
     }
     else {
