@@ -75,11 +75,33 @@ function games(channel, args) {
         }
         case 'cancel': cancelSchedule(channel); break;
         case 'next': nextSchedule(channel); break;
-        case null:
-        case undefined: fetchFreeGamesList(channel, args); break;
-        default: unknownCommand(channel, args[0], args.slice(1));
+        case 'sources': showSources(channel); break;
+        default:
+            if(args.length === 0) {
+                fetchFreeGamesList(channel);
+            }
+            else {
+                const knownSources = [];
+                const unknownSources = [];
+                args.forEach(source => Games.knownSources.includes(source) ? knownSources.push(source) : unknownSources.push(source));
+                if(knownSources.length > 0) {
+                    // At least one known source
+                    fetchFreeGamesList(channel, knownSources, unknownSources);
+                }
+                else {
+                    // No known sources or maybe unknown command
+                    unknownCommand(channel, args[0], args.slice(1));
+                }
+            }
         }
     }
+    else {
+        unknownCommand(channel, 'NO_COMMAND_PROVIDED', '');
+    }
+}
+
+function showSources(channel) {
+    channel.send(`Here's the list of sources you can uses like \`!games source1 source2\` command: ${Games.knownSources.join(', ')}`);
 }
 
 function showHelp(channel, cmd) {
@@ -87,7 +109,8 @@ function showHelp(channel, cmd) {
     if(typeof cmd === 'string' && cmd in help) {
         lines = help[cmd];
     }
-    else {
+    else if(cmd) {
+        // If cmd is undefined then just show help, otherwise show that the command is unknown
         lines = [`I don't know the '${cmd}' command`].concat(lines);
     }
     channel.send(lines.join('\n'));
@@ -136,9 +159,9 @@ function schedule(channel, cron = gamesCron, announce = true) {
     }
 }
 
-function fetchFreeGamesList(channel, args) {
+function fetchFreeGamesList(channel, sourcesToFetch, unknownSources) {
     if(channel) {
-        Games.fetch().then((result) => {
+        Games.fetch(sourcesToFetch).then((result) => {
             Utils.log(`Fetching games for channel ${channel.name} (${channel.id})`);
             // Utils.log(`Result : ${JSON.stringify(result)}`);
             if(result.games.length === 0) {
@@ -149,6 +172,10 @@ function fetchFreeGamesList(channel, args) {
                 for(const game of result.games) {
                     channel.send(`${game.name} ${game.url}`);
                 }
+            }
+
+            if(Array.isArray(unknownSources) && unknownSources.length > 0) {
+                channel.send(`I don't know some sources that was provided : ${unknownSources.join()}`);
             }
 
             if(result.errors.length > 0) {

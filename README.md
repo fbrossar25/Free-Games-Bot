@@ -11,6 +11,7 @@ Depedencies :
 - [discordJS](https://discord.js.org/?source=post_page---------------------------#/) to post messages and wait for commands
 - [moment](https://momentjs.com/) to ease date formatting
 - [node-schedule](https://www.npmjs.com/package/node-schedule) to schedule notifications using cron expressions
+- [axios](https://www.npmjs.com/package/axios) to make webservices calls to each games stores.
 
 ## How to add this bot in discord
 First, [follow this guide](https://discordjs.guide/).
@@ -31,7 +32,7 @@ For each commands below, the channel id need to be into the CHANNELS_IDS list of
 ```
 !games [options]
 ```
-- Without any options, the bot will fetch free games on each programmed websites (For now, only Epic Games Store)
+- Without any options, the bot will fetch free games on each programmed websites
 - Options are :
   - ping : basic ping response
   - schedule : create a scheduled tasks which will run in the channel using GAMES_CRON value in .env file by default. If cron expression is provided, the will attempt to use it or fallback to default cron expression, see [cron expressions here](https://crontab.guru/every-day-at-1am).
@@ -39,6 +40,8 @@ For each commands below, the channel id need to be into the CHANNELS_IDS list of
   - next : print when the next notofications will occur
   - help : print help about !games command with no arguments
   - usage : print info about all commands of the bot
+  - sources : print the list of known sources
+  - 
 
 ## Examples
 ![Example 1](./img/cancel.png)

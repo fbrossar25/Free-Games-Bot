@@ -2,17 +2,19 @@
     "usage": [
         "Free games bot",
         "usage : `!games [command]`",
-        "Where command is optionnal or one of :",
+        "Where command is one of :",
         "- `schedule` : schedule free games notifications on this channel",
         "- `next` : Tell the next time this channel will receive notifications",
         "- `cancel` : cancel scheduled notifications on this channel",
         "- `ping` : Will show obi wan kenobi",
         "- `help` : Show help about a specific command. Example : `!games help next`",
-        "If command is not provided, will show free games list. To know more : `!games help`"
+        "- `sources` : Show a list of compatible sources to use like `!games source1 source2`",
+        "If neither command nor sources are provided, will show free games list. To know more : `!games help`"
     ],
     "help": [
-        "List free games among various websites (currently, only Epic Games Store)",
-        "usage : `!games`",
+        "List free games among various websites",
+        "usage : `!games [sources]`",
+        "Where sources is optionnal or is a list of known sources. Sources can be listed with `!games sources`",
         "To know more commands : `!games usage`"
     ],
     "schedule": [
@@ -33,5 +35,9 @@
     "ping": [
         "Will show obi wan kenobi",
         "usage : `!games ping`"
+    ],
+    "sources": [
+        "Show a list of compatible sources",
+        "usage : `!games sources`"
     ]
 }

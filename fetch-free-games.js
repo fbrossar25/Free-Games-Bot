@@ -1,30 +1,39 @@
 const Utils = require('./utils');
-const axios = require('axios');
+const { epicStore, humbleBundleStore } = require('./stores');
+const stores = {
+    'epic': epicStore,
+    'humble': humbleBundleStore,
+};
+const knownSources = Object.keys(stores);
 
 function unique(value, index, self) {
     return self.indexOf(value) === index;
 }
 
-function fetchFrom(source) {
-    switch(source) {
-    case 'epic':
-    default:
-        return fetchFromEpic();
-    }
+function formatSources(sources) {
+    return sources.map(s => s.trim().toLowerCase()).filter(unique);
 }
 
-module.exports.fetch = (sources = ['epic']) => {
+module.exports.knownSources = knownSources;
+
+module.exports.fetch = (sources = knownSources) => {
     return new Promise((success) => {
         const fetchPromises = [];
 
-        // Making calls to each webservices
-        sources.map(source => {
-            source.trim().toLowerCase();
-        }).filter(unique).forEach((source) => {
-            fetchPromises.push(fetchFrom(source));
+        // Preparing calls to each stores
+        formatSources(sources).forEach(source => {
+            if(source in stores) {
+                fetchPromises.push(stores[source].fetch());
+            }
+            else {
+                fetchPromises.push({
+                    source:source,
+                    error: `Unknown source named '${source}'`,
+                });
+            }
         });
 
-        // Merging each webservices
+        // Merging each stores reponses
         Promise.allSettled(fetchPromises).then((fetchResults) => {
             const result = {
                 games: [],
@@ -49,32 +58,3 @@ module.exports.fetch = (sources = ['epic']) => {
         });
     });
 };
-
-function fetchFromEpic() {
-    return new Promise((success) => {
-        axios.get('https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=fr&country=FR&allowCountries=FR')
-            .then(response => {
-                const elements = response.data.data.Catalog.searchStore.elements;
-                const freeGames = [];
-                for(const el of elements) {
-                    if(el.price.totalPrice.discountPrice === 0) {
-                        freeGames.push({
-                            source: 'epic',
-                            name: el.title,
-                            url: `https://www.epicgames.com/store/fr/product/${el.productSlug}`,
-                        });
-                    }
-                }
-                success({
-                    games: freeGames,
-                });
-            })
-            .catch(error => {
-                Utils.log(`Error ${error.response.status} from Epic Games Store : ${JSON.stringify(error)}`);
-                success({
-                    source: 'epic',
-                    error: 'Cannot fetch games from Epic Games Store (see logs)',
-                });
-            });
-    });
-}
