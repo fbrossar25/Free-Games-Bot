@@ -1,0 +1,37 @@
+{
+    "usage": [
+        "Free games bot",
+        "usage : `!games [command]`",
+        "Where command is optionnal or one of :",
+        "- `schedule` : schedule free games notifications on this channel",
+        "- `next` : Tell the next time this channel will receive notifications",
+        "- `cancel` : cancel scheduled notifications on this channel",
+        "- `ping` : Will show obi wan kenobi",
+        "- `help` : Show help about a specific command. Example : `!games help next`",
+        "If command is not provided, will show free games list. To know more : `!games help`"
+    ],
+    "help": [
+        "List free games among various websites (currently, only Epic Games Store)",
+        "usage : `!games`",
+        "To know more commands : `!games usage`"
+    ],
+    "schedule": [
+        "Schedule periodic notifications on this channel",
+        "usage : `!games schedule [expr]`",
+        "Where expr is an optionnal cron expression. Examples",
+        "- Schedule notifications every Thursday, at 9am (default): `!games schedule 0 9 * * THU`",
+        "See more about cron expressions `[here](https://crontab.guru/#0_9_*_*_THU)`"
+    ],
+    "next": [
+        "Show if and when will occur the next periodic notifications",
+        "usage : `!games next`"
+    ],
+    "cancel": [
+        "Cancel any periodic notifications on this channel",
+        "usage : `!games cancel`"
+    ],
+    "ping": [
+        "Will show obi wan kenobi",
+        "usage : `!games ping`"
+    ]
+}

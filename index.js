@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const Scheduler = require('node-schedule');
 const Utils = require('./utils');
 const Games = require('./fetch-free-games');
+const help = require('./help.json');
+
 require('dotenv').config();
 
 const prefix = process.env.PREFIX;
@@ -63,6 +65,8 @@ function ping(channel) {
 function games(channel, args) {
     if(Array.isArray(args)) {
         switch(args[0]) {
+        case 'usage': showHelp(channel, 'usage'); break;
+        case 'help': showHelp(channel, args[1]); break;
         case 'ping': ping(channel); break;
         case 'schedule': {
             const cron = args.slice(1).join(' ').trim();
@@ -76,6 +80,17 @@ function games(channel, args) {
         default: unknownCommand(channel, args[0], args.slice(1));
         }
     }
+}
+
+function showHelp(channel, cmd) {
+    let lines = help['help'];
+    if(typeof cmd === 'string' && cmd in help) {
+        lines = help[cmd];
+    }
+    else {
+        lines = [`I don't know the '${cmd}' command`].concat(lines);
+    }
+    channel.send(lines.join('\n'));
 }
 
 function nextSchedule(channel) {

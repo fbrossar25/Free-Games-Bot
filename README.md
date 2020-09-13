@@ -32,6 +32,8 @@ For each commands below, the channel id need to be into the CHANNELS_IDS list of
   - schedule : create a scheduled tasks which will run in the channel using GAMES_CRON value in .env file by default. If cron expression is provided, the will attempt to use it or fallback to default cron expression, see [cron expressions here](https://crontab.guru/every-day-at-1am).
   - cancel : cancel scheduled tasks for this channel
   - next : print when the next notofications will occur
+  - help : print help about !games command with no arguments
+  - usage : print info about all commands of the bot
 
 ## Examples
 ![Example 1](./img/cancel.png)
@@ -46,5 +48,5 @@ For each commands below, the channel id need to be into the CHANNELS_IDS list of
 |TOKEN|Token of your boot, see [this](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token)|`4815162342`|
 |CHANNELS_IDS|List of channels ids where the bot is allowed to posts|`42,9001,4815162342`|
 |CHANNELS_IDS_TO_SCHEDULE|List of channels ids where the bot will automatically schedule on startup. Those ids also needs to be on CHANNELS_IDS|`42,9001`|
-|GAMES_CRON|Cron expression used to schedule periodical verification and post of free games. In this exemple, each Thursday at 9pm|`0 9 * * THU`|
+|GAMES_CRON|Cron expression used to schedule periodical verification and post of free games. In this exemple, each Thursday at 9am|`0 9 * * THU`|
 
