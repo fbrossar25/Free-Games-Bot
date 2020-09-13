@@ -59,3 +59,12 @@ module.exports.humbleBundleStore = new Store(
     game => game.current_price.amount === 0 && !game.human_name.endsWith(' Demo'),
     game => game.human_name,
     game => `https://www.humblebundle.com/store/${game.human_url}`);
+
+module.exports.gogStore = new Store(
+    'gog',
+    'GOG',
+    'https://www.gog.com/games/ajax/filtered?mediaType=game&page=1&price=discounted&sort=popularity&hide=dlc',
+    response => response.data.products,
+    game => game.price.isFree && game.price.isDiscounted && !game.title.endsWith(' Demo'),
+    game => game.title,
+    game => `https://www.gog.com${game.url}`);
