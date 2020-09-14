@@ -12,12 +12,13 @@ function unique(value, index, self) {
 }
 
 function formatSources(sources) {
-    return sources.map(s => s.trim().toLowerCase()).filter(unique);
+    const usableSources = Array.isArray(sources) && sources.length > 0 ? sources : knownSources;
+    return usableSources.map(s => s.trim().toLowerCase()).filter(unique);
 }
 
 module.exports.knownSources = knownSources;
 
-module.exports.fetch = (sources = knownSources) => {
+module.exports.fetch = (sources) => {
     return new Promise((success) => {
         const fetchPromises = [];
 
@@ -33,7 +34,6 @@ module.exports.fetch = (sources = knownSources) => {
                 });
             }
         });
-
         // Merging each stores reponses
         Promise.allSettled(fetchPromises).then((fetchResults) => {
             const result = {

@@ -9,6 +9,7 @@
         "- `ping` : Will show obi wan kenobi",
         "- `help` : Show help about a specific command. Example : `!games help next`",
         "- `sources` : Show a list of compatible sources to use like `!games source1 source2`",
+        "- `usage` : Show this list of usable commands",
         "If neither command nor sources are provided, will show free games list. To know more : `!games help`"
     ],
     "help": [
