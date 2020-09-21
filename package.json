@@ -1,6 +1,6 @@
 {
   "name": "free-games-bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Free games bot for discord",
   "main": "index.js",
   "scripts": {

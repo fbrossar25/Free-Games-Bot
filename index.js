@@ -150,7 +150,7 @@ function schedule(channel, cron = gamesCron, announce = true) {
     if(job) {
         job.cancel();
     }
-    job = Scheduler.scheduleJob(cron, () => fetchFreeGamesList(channel, true));
+    job = Scheduler.scheduleJob(cron, () => fetchFreeGamesList(channel, Games.knownSources, Games.knownSources, true));
     cronJobs[channel.id] = job;
     if(job) {
         Utils.log(`Scheduled notification on ${channel.guild.name}#${channel.name} (${channel.id}), next one on ${Utils.getDateString(job.nextInvocation().toDate())}`);
