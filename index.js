@@ -3,24 +3,63 @@ const Scheduler = require('node-schedule');
 const Utils = require('./utils');
 const Games = require('./fetch-free-games');
 const help = require('./help.json');
-
+const moment = require('moment');
+const thisServerUtcOffset = moment().utc().utcOffset();
 require('dotenv').config();
+
+// Relative channel offset from the running server point of view
+function getRelativeChannelOffset(channel) {
+    if(channel) {
+        return thisServerUtcOffset - moment(channel.createdAt).utc().utcOffset();
+    }
+    return 0;
+}
+
+class SimpleRule {
+    constructor(dayOfWeek, hour, minute) {
+        this.dayOfWeek = dayOfWeek;
+        this.minute = minute;
+        this.hour = hour;
+    }
+
+    forChannelUtc(channel) {
+        // negate channel offset to adapt to current server offset
+        const m = moment.utc().hours(this.hour).minutes(this.minute).utcOffset(getRelativeChannelOffset(channel));
+        return new SimpleRule(this.dayOfWeek, m.hours(), m.minutes());
+    }
+}
+
+function isValidRule(rule) {
+    return ruleRegexp.test(rule.trim());
+}
+
+function parseRule(rule, defaultRule = null) {
+    if(!isValidRule(rule)) {
+        Utils.log(`${process.env.WEEKLY_ANNOUNCE} is not a valid rule, must be in D:HH:MM, where D is day of week beetween 0 (Sunday) and 6, HH is hour of day, MM minute of hour`);
+        return defaultRule;
+    }
+    const ruleParts = rule.trim().split(':');
+    return new SimpleRule(parseInt(ruleParts[0]), parseInt(ruleParts[1]), parseInt(ruleParts[2]));
+}
 
 const prefix = process.env.PREFIX;
 const token = process.env.TOKEN;
 const gamesChannelsIds = process.env.CHANNELS_IDS.split(',');
 const gamesChannelsIdsToSchedule = process.env.CHANNELS_IDS_TO_SCHEDULE.split(',');
-const gamesCron = process.env.GAMES_CRON;
+// HH:MM format with optional leading 0
+const ruleRegexp = /^[0-6]:(?:0?\d|1\d|2[0-3]):[0-5][0-9]$/;
+const defaultWeeklyAnnounceRule = new SimpleRule(4, 18, 30);
+const weeklyAnnounceRule = parseRule(process.env.WEEKLY_ANNOUNCE, defaultWeeklyAnnounceRule);
 const commandName = process.env.COMMAND;
 const client = new Discord.Client();
-const cronJobs = {};
+const jobs = {};
 
 client.on('ready', () => {
     Utils.log(`Logged in as ${client.user.tag}!`);
     if(Array.isArray(gamesChannelsIds) && Array.isArray(gamesChannelsIdsToSchedule)) {
         gamesChannelsIdsToSchedule.forEach((chanId) => {
             if(gamesChannelsIds.includes(chanId)) {
-                client.channels.fetch(chanId).then(channel => schedule(channel, gamesCron, false));
+                client.channels.fetch(chanId).then(channel => schedule(channel, weeklyAnnounceRule, false));
             }
         });
     }
@@ -69,8 +108,20 @@ function games(channel, args) {
         case 'help': showHelp(channel, args[1]); break;
         case 'ping': ping(channel); break;
         case 'schedule': {
-            const cron = args.slice(1).join(' ').trim();
-            schedule(channel, cron.length > 0 ? cron : gamesCron);
+            let rule = null;
+            if(args[1] && isValidRule(args[1])) {
+                // D:HH:MM
+                rule = parseRule(args[1]);
+            }
+            else if (args.length > 2) {
+                // CRON
+                const cron = args.slice(1).join(' ').trim();
+                if(cron.length >= '* * * * *'.length) {
+                    // Minimum cron length
+                    rule = cron;
+                }
+            }
+            schedule(channel, rule ? rule : weeklyAnnounceRule);
             break;
         }
         case 'cancel': cancelSchedule(channel); break;
@@ -118,8 +169,8 @@ function showHelp(channel, cmd) {
 
 function nextSchedule(channel, announce = true) {
     let date = null;
-    if(cronJobs[channel.id]) {
-        date = cronJobs[channel.id].nextInvocation();
+    if(jobs[channel.id]) {
+        date = jobs[channel.id].nextInvocation();
     }
     let message;
     if(date) {
@@ -135,8 +186,8 @@ function nextSchedule(channel, announce = true) {
 }
 
 function cancelSchedule(channel) {
-    if(cronJobs[channel.id]) {
-        cronJobs[channel.id].cancel();
+    if(jobs[channel.id]) {
+        jobs[channel.id].cancel();
         channel.send('All scheduled tasks ar now canceled for this channel, my job here is done !').catch(console.error);
         Utils.log(`Scheduled task cancelled for channel ${channel.guild.name}#${channel.name} (${channel.id})`);
     }
@@ -145,19 +196,22 @@ function cancelSchedule(channel) {
     }
 }
 
-function schedule(channel, cron = gamesCron, announce = true) {
-    let job = cronJobs[channel.id];
+function schedule(channel, rule = weeklyAnnounceRule, announce = true) {
+    const jobFct = () => fetchFreeGamesList(channel, Games.knownSources, [], true);
+    let job = jobs[channel.id];
     if(job) {
         job.cancel();
     }
-    job = Scheduler.scheduleJob(cron, () => fetchFreeGamesList(channel, Games.knownSources, Games.knownSources, true));
-    cronJobs[channel.id] = job;
+    job = Scheduler.scheduleJob(rule instanceof SimpleRule ? rule.forChannelUtc(channel) : rule, jobFct);
+    jobs[channel.id] = job;
     if(job) {
-        Utils.log(`Scheduled notification on ${channel.guild.name}#${channel.name} (${channel.id}), next one on ${Utils.getDateString(job.nextInvocation().toDate())}`);
+        Utils.log(`Scheduled notification on ${channel.guild.name}#${channel.name} (${channel.id}), next one on ${Utils.getDateString(job.nextInvocation().toDate(), null, true)}`);
     }
     else {
-        Utils.log(`Unable to schedule notification on ${channel.guild.name}#${channel.name} (${channel.id}), rescheduling to default`);
-        schedule(channel, gamesCron);
+        Utils.log(`Unable to schedule notification on ${channel.guild.name}#${channel.name} (${channel.id}), rescheduling to default ${rule === weeklyAnnounceRule ? 'failed' : ''}`);
+        if(rule !== weeklyAnnounceRule) {
+            schedule(channel, weeklyAnnounceRule);
+        }
     }
     if(announce) {
         nextSchedule(channel);
