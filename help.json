@@ -1,44 +1,44 @@
 {
     "usage": [
         "Free games bot",
-        "usage : `!games [command]`",
+        "usage : `$prefix$cmd [command]`",
         "Where command is one of :",
         "- `schedule` : schedule free games notifications on this channel",
         "- `next` : Tell the next time this channel will receive notifications",
         "- `cancel` : cancel scheduled notifications on this channel",
         "- `ping` : Will show obi wan kenobi",
-        "- `help` : Show help about a specific command. Example : `!games help next`",
-        "- `sources` : Show a list of compatible sources to use like `!games source1 source2`",
+        "- `help` : Show help about a specific command. Example : `$prefix$cmd help next`",
+        "- `sources` : Show a list of compatible sources to use like `$prefix$cmd source1 source2`",
         "- `usage` : Show this list of usable commands",
-        "If neither command nor sources are provided, will show free games list. To know more : `!games help`"
+        "If neither command nor sources are provided, will show free games list. To know more : `$prefix$cmd help`"
     ],
     "help": [
         "List free games among various websites",
-        "usage : `!games [sources]`",
-        "Where sources is optionnal or is a list of known sources. Sources can be listed with `!games sources`",
-        "To know more commands : `!games usage`"
+        "usage : `$prefix$cmd [sources]`",
+        "Where sources is optionnal or is a list of known sources. Sources can be listed with `$prefix$cmd sources`",
+        "To know more commands : `$prefix$cmd usage`"
     ],
     "schedule": [
         "Schedule periodic notifications on this channel",
-        "usage : `!games schedule [expr]`",
+        "usage : `$prefix$cmd schedule [expr]`",
         "Where expr is an optionnal cron expression. Examples",
-        "- Schedule notifications every Thursday, at 9am (default): `!games schedule 0 9 * * THU`",
+        "- Schedule notifications every Thursday, at 9am (default): `$prefix$cmd schedule 0 9 * * THU`",
         "See more about cron expressions `[here](https://crontab.guru/#0_9_*_*_THU)`"
     ],
     "next": [
         "Show if and when will occur the next periodic notifications",
-        "usage : `!games next`"
+        "usage : `$prefix$cmd next`"
     ],
     "cancel": [
         "Cancel any periodic notifications on this channel",
-        "usage : `!games cancel`"
+        "usage : `$prefix$cmd cancel`"
     ],
     "ping": [
         "Will show obi wan kenobi",
-        "usage : `!games ping`"
+        "usage : `$prefix$cmd ping`"
     ],
     "sources": [
         "Show a list of compatible sources",
-        "usage : `!games sources`"
+        "usage : `$prefix$cmd sources`"
     ]
 }
