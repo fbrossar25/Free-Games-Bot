@@ -4,6 +4,7 @@ const Utils = require('./utils');
 const Games = require('./fetch-free-games');
 const help = require('./help.json');
 const moment = require('moment-timezone');
+const packageJson = require('./package.json');
 require('dotenv').config();
 
 /** Current bot's timezone */
@@ -95,7 +96,7 @@ const client = new Discord.Client();
 /** jobs maps, with channel's ids as keys, jobs as values */
 const jobs = {};
 /** Running version of the bot */
-const version = process.env.npm_package_version;
+const version = process.env.npm_package_version || packageJson.version;
 
 client.on('ready', () => {
     Utils.log(`Logged in as ${client.user.tag}!`);
