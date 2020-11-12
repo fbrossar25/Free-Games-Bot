@@ -6,13 +6,16 @@ const help = require('./help.json');
 const moment = require('moment-timezone');
 require('dotenv').config();
 
-if(typeof process.env.TIMEZONE === 'string') {
-    if(moment.tz.zone(process.env.TIMEZONE)) {
-        moment.tz.setDefault(process.env.TIMEZONE);
-        Utils.log(`Running on ${process.env.TIMEZONE} timezone`);
+/** Current bot's timezone */
+const timezone = process.env.TIMEZONE;
+
+if(timezone === 'string') {
+    if(moment.tz.zone(timezone)) {
+        moment.tz.setDefault(timezone);
+        Utils.log(`Running on ${timezone} timezone`);
     }
     else {
-        Utils.log(`Invalid timezone given : ${process.env.TIMEZONE} -> Running on ${moment.tz.guess()} timezone`);
+        Utils.log(`Invalid timezone given : ${timezone} -> Running on ${moment.tz.guess()} timezone`);
     }
 }
 else {
@@ -91,6 +94,8 @@ const commandName = process.env.COMMAND;
 const client = new Discord.Client();
 /** jobs maps, with channel's ids as keys, jobs as values */
 const jobs = {};
+/** Running version of the bot */
+const version = process.env.npm_package_version;
 
 client.on('ready', () => {
     Utils.log(`Logged in as ${client.user.tag}!`);
@@ -164,7 +169,17 @@ function command(cmd) {
  * @param {?string[]} cmdArgs command arguments
  */
 function unknownCommand(channel, cmdName, cmdArgs) {
-    channel.send(`I don't know the command '${cmdName}' with those arguments : ${cmdArgs}`).catch(console.error);
+    let argsDisplay = '';
+    if(cmdArgs === null
+    || cmdArgs === undefined
+    || (Array.isArray(cmdArgs) && cmdArgs.length === 0)
+    || (typeof cmdArgs === 'string' && cmdArgs.replace(/\s+/g, '').length === 0)) {
+        argsDisplay = 'No arguments provided';
+    }
+    else {
+        argsDisplay = cmdArgs;
+    }
+    channel.send(`I don't know the command '${cmdName}' with those arguments : ${argsDisplay}. Use \`${prefix}${commandName} help\` to know more`).catch(console.error);
     Utils.log(`Unknown command '${cmdName}' received with args : ${cmdArgs}`);
 }
 
@@ -179,6 +194,7 @@ function games(channel, args) {
         case 'usage': showHelp(channel, 'usage'); break;
         case 'help': showHelp(channel, args[1]); break;
         case 'ping': ping(channel); break;
+        case 'about': about(channel); break;
         case 'schedule': {
             let rule = null;
             if(args[1] && isValidRule(args[1])) {
@@ -203,10 +219,18 @@ function games(channel, args) {
         }
     }
     else {
-        unknownCommand(channel, 'NO_COMMAND_PROVIDED', '');
+        unknownCommand(channel, 'NO_COMMAND_PROVIDED', null);
     }
 }
 
+/**
+ * 'about' command implementation
+ * Display bot's version and timezone
+ * @param {!Discord.Channel} channel target channel
+ */
+function about(channel) {
+    channel.send(`Free Games Bot version ${version} running in ${timezone} time zone.`);
+}
 
 /**
  * 'ping' command implementation
@@ -239,7 +263,7 @@ function showHelp(channel, cmd) {
     }
     else if(cmd) {
         // If cmd is undefined then just show help, otherwise show that the command is unknown
-        lines = [`I don't know the '${cmd}' command`].concat(lines);
+        lines = [`I don't know the '${cmd}' command, use \`${prefix}${commandName} help\` to know more`].concat(lines);
     }
     channel.send(lines.join('\n').replace(/\$prefix/ig, prefix).replace(/\$cmd/ig, commandName)).catch(console.error);
 }

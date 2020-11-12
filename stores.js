@@ -1,5 +1,7 @@
 const Utils = require('./utils');
 const axios = require('axios');
+const moment = require('moment');
+const { now } = require('moment');
 
 class Store {
     constructor(source, humanSource, url, gamesFromResponseFct, isFreeFct, gameNameFct, gameUrlFct) {
@@ -56,7 +58,23 @@ module.exports.humbleBundleStore = new Store(
     'Humble Bundle',
     'https://www.humblebundle.com/store/api/search?sort=discount&filter=all&hmb_source=store_navbar&request=1&page=0',
     response => response.data.results,
-    game => game.current_price.amount === 0 && !game.human_name.endsWith(' Demo'),
+    game => {
+        const saleEnd = game.sale_end ? moment(game.sale_end) : null;
+        if(game.current_price.amount === 0 && !game.human_name.endsWith(' Demo')) {
+            if(saleEnd !== null && moment().isAfter(saleEnd)) {
+                // if sale never end then its a lifetime free game, no point in notifying it
+                return false;
+            }
+            else {
+                // free game
+                return true;
+            }
+        }
+        else {
+            // not free game
+            return false;
+        }
+    },
     game => game.human_name,
     game => `https://www.humblebundle.com/store/${game.human_url}`);
 

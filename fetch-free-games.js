@@ -42,7 +42,6 @@ module.exports.fetch = (sources) => {
             };
             for(const fetchResult of fetchResults) {
                 const value = fetchResult.value;
-                Utils.log(`fetchResult value : ${JSON.stringify(value)}`);
                 if(value.error) {
                     result.errors.push({
                         source: value.source,
@@ -55,6 +54,7 @@ module.exports.fetch = (sources) => {
                     }
                 }
             }
+            Utils.log(`Free games found : ${JSON.stringify(result)}`);
             success(result);
         });
     });

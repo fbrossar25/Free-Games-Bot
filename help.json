@@ -10,6 +10,7 @@
         "- `help` : Show help about a specific command. Example : `$prefix$cmd help next`",
         "- `sources` : Show a list of compatible sources to use like `$prefix$cmd source1 source2`",
         "- `usage` : Show this list of usable commands",
+        "- `about` : Show bot's version and timezone",
         "If neither command nor sources are provided, will show free games list. To know more : `$prefix$cmd help`"
     ],
     "help": [
@@ -40,5 +41,9 @@
     "sources": [
         "Show a list of compatible sources",
         "usage : `$prefix$cmd sources`"
+    ],
+    "about": [
+        "Show bot's currently running version and timezone",
+        "usage : `$prefix$cmd about`"
     ]
 }
