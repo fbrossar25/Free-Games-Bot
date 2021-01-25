@@ -49,7 +49,10 @@ module.exports.epicStore = new Store(
     'Epic Games Store',
     'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=fr&country=FR&allowCountries=FR',
     response => response.data.data.Catalog.searchStore.elements,
-    game => game.price.totalPrice.discountPrice === 0 && game.productSlug !== '[]',
+    game => {
+        const effectiveDate = moment(game.effectiveDate);
+        return game.price.totalPrice.discountPrice === 0 && game.productSlug !== '[]' && effectiveDate.isBefore(moment());
+    },
     game => game.title,
     game => `https://www.epicgames.com/store/fr/product/${game.productSlug}`);
 

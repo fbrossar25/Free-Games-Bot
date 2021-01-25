@@ -1,6 +1,6 @@
 {
   "name": "free-games-bot",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Free games bot for discord",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/fbrossar25/Free-Games-Bot#readme",
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
     "eslint": "^7.13.0",
