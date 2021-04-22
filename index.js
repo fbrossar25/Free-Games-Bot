@@ -13,14 +13,14 @@ const timezone = process.env.TIMEZONE;
 if(timezone === 'string') {
     if(moment.tz.zone(timezone)) {
         moment.tz.setDefault(timezone);
-        Utils.log(`Running on ${timezone} timezone`);
+        Utils.log(`Running on ${timezone} timezone (convifugred)`);
     }
     else {
-        Utils.log(`Invalid timezone given : ${timezone} -> Running on ${moment.tz.guess()} timezone`);
+        Utils.log(`Invalid timezone given : ${timezone} -> Running on ${moment.tz.guess()} timezone (fallback guessed)`);
     }
 }
 else {
-    Utils.log(`Running on ${moment.tz.guess()} timezone`);
+    Utils.log(`Running on ${moment.tz.guess()} timezone (guessed)`);
 }
 
 /**
