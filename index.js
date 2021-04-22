@@ -10,17 +10,19 @@ require('dotenv').config();
 /** Current bot's timezone */
 const timezone = process.env.TIMEZONE;
 
-if(timezone === 'string') {
+if(typeof timezone === 'string') {
     if(moment.tz.zone(timezone)) {
         moment.tz.setDefault(timezone);
-        Utils.log(`Running on ${timezone} timezone (convifugred)`);
+        Utils.log(`Running on configured ${moment.defaultZone.name} timezone`);
     }
     else {
-        Utils.log(`Invalid timezone given : ${timezone} -> Running on ${moment.tz.guess()} timezone (fallback guessed)`);
+        moment.tz.setDefault(Intl.DateTimeFormat().resolvedOptions().timeZone);
+        Utils.log(`Invalid timezone given : ${timezone}, running on fallback ${moment.defaultZone.name} timezone`);
     }
 }
 else {
-    Utils.log(`Running on ${moment.tz.guess()} timezone (guessed)`);
+    moment.tz.setDefault(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    Utils.log(`No timezone provided, running on ${moment.defaultZone.name} timezone`);
 }
 
 /**
