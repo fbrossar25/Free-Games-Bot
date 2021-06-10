@@ -50,8 +50,29 @@ module.exports.epicStore = new Store(
     'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=fr&country=FR&allowCountries=FR',
     response => response.data.data.Catalog.searchStore.elements,
     game => {
-        const effectiveDate = moment(game.effectiveDate);
-        return game.price.totalPrice.discountPrice === 0 && game.productSlug !== '[]' && game.promotions != null && effectiveDate.isBefore(moment());
+        const currentDate = moment();
+        if(!(game.promotions) || !Array.isArray(game.promotions.promotionalOffers)) {
+            return false;
+        }
+        let allPromos = [];
+        for(const promosArray of game.promotions.promotionalOffers) {
+            if(Array.isArray(promosArray.promotionalOffers)) {
+                allPromos = allPromos.concat(promosArray.promotionalOffers);
+            }
+        }
+        let hasActivePromo = false;
+        for(const promo of allPromos) {
+            if(!(promo.startDate) || !(promo.endDate)) {
+                continue;
+            }
+            const promoStart = moment(promo.startDate);
+            const promoEnd = moment(promo.endDate);
+            if(currentDate.isAfter(promoStart) && currentDate.isBefore(promoEnd)) {
+                hasActivePromo = true;
+                break;
+            }
+        }
+        return hasActivePromo && (game.seller) && game.seller.id === 'o-ufmrk5furrrxgsp5tdngefzt5rxdcn';
     },
     game => game.title,
     game => `https://www.epicgames.com/store/fr/product/${game.productSlug}`);
