@@ -1,6 +1,6 @@
 {
     "name": "free-games-bot",
-    "version": "1.1.9",
+    "version": "1.2.0-SNAPSHOT",
     "description": "Free games bot for discord",
     "main": "index.js",
     "scripts": {
@@ -10,7 +10,7 @@
         "dev": "nodemon --inspect index.js",
         "stop-online": "heroku ps:scale web=0 worker=0",
         "start-online": "heroku ps:scale web=0 worker=1",
-        "down": "heroku maintenance:on && heroku ps:scale web=0 worker=0",
+        "down": "heroku maintenance:on --app=fbrossar25-free-games-bot && heroku ps:scale web=0 worker=0 --app=fbrossar25-free-games-bot",
         "up": "heroku maintenance:off && heroku ps:scale web=0 worker=1",
         "logs": "heroku logs --tail"
     },

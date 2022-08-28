@@ -37,5 +37,5 @@ const hasActiveFreePromotion = (game) => {
 
 for (const game of responseElm) {
     const isFree = hasActiveFreePromotion(game);
-    console.info(`${game.title} if free ? ${isFree}`);
+    console.info(`${game.title} is free ? ${isFree}`);
 }
