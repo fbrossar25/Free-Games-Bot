@@ -1,4 +1,18 @@
-const moment = require('moment');
+const dayjs = require('dayjs');
+
+function getTimeZone() {
+    return process.env.TZ ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+const dateFormatter = new Intl.DateTimeFormat('fr-fr', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    fractionalSecondDigits: 3
+});
 
 function getCallerInfoString() {
     try {
@@ -12,27 +26,17 @@ function getCallerInfoString() {
     }
 }
 
-module.exports.log = (msg) => {
-    console.log(`${getDateString()}:${getCallerInfoString()} - ${msg}`);
-};
-
-function getDateString(date, utcOffset, showUtc = false) {
-    let m;
-    if(date instanceof Date) {
-        m = moment(date);
-    }
-    else {
-        m = moment();
-    }
-    if(typeof utcOffset === 'number') {
-        m.utc().utcOffset(utcOffset);
-    }
-
-    if(showUtc) {
-        return m.format('DD/MM/YYYY @ HH:mm:ss Z');
-    }
-
-    return m.format('DD/MM/YYYY @ HH:mm:ss');
+function getDateString(date=new Date(), showMillis=false) {
+    //return dateFormatter.format(date ?? new Date());
+    return dayjs(date).format(`YYYY-MM-DD HH:mm:ss${showMillis ? '.SSS' : ''}`);
 }
 
+module.exports.log = (msg) => {
+    console.log(`${getDateString(new Date(), true)} : ${getCallerInfoString()} - ${msg}`);
+};
+module.exports.logError = (msg, error) => {
+    console.error(`${getDateString(new Date(), true)} : ${getCallerInfoString()} - ${msg}`, error);
+};
+
 module.exports.getDateString = getDateString;
+module.exports.getTimeZone = getTimeZone;

@@ -4,15 +4,10 @@
     "description": "Free games bot for discord",
     "main": "index.js",
     "scripts": {
+        "docker-run": "docker run --rm --name free-games-bot -it -v ./log:/var/log/bot fbrossar25/free-games-bot",
+        "docker-build": "docker build --tag fbrossar25/free-games-bot .",
         "start": "node index.js",
-        "test": "node free-test.js",
-        "heroku": "heroku local",
-        "dev": "nodemon --inspect index.js",
-        "stop-online": "heroku ps:scale web=0 worker=0",
-        "start-online": "heroku ps:scale web=0 worker=1",
-        "down": "heroku maintenance:on --app=fbrossar25-free-games-bot && heroku ps:scale web=0 worker=0 --app=fbrossar25-free-games-bot",
-        "up": "heroku maintenance:off && heroku ps:scale web=0 worker=1",
-        "logs": "heroku logs --tail"
+        "dev": "nodemon --inspect index.js"
     },
     "repository": {
         "type": "git",
@@ -31,12 +26,15 @@
     },
     "homepage": "https://github.com/fbrossar25/Free-Games-Bot#readme",
     "dependencies": {
-        "axios": "^0.21.1",
+        "axios": "^0.27.2",
+        "dayjs": "^1.11.5",
         "discord.js": "^12.5.3",
-        "dotenv": "^8.6.0",
+        "dotenv": "^16.0.1",
         "eslint": "^7.28.0",
-        "moment": "^2.29.1",
-        "moment-timezone": "^0.5.33",
         "node-schedule": "^1.3.3"
+    },
+    "engines": {
+        "npm": ">=8.0.0",
+        "node": ">=16.17.0"
     }
 }

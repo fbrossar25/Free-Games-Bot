@@ -1,9 +1,7 @@
 const Utils = require('./utils');
-const { epicStore, humbleBundleStore, gogStore } = require('./stores');
+const { epicStore } = require('./stores');
 const stores = {
-    'epic': epicStore,
-    'humble': humbleBundleStore,
-    'gog': gogStore,
+    'epic': epicStore
 };
 const knownSources = Object.keys(stores);
 

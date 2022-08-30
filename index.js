@@ -3,27 +3,11 @@ const Scheduler = require('node-schedule');
 const Utils = require('./utils');
 const Games = require('./fetch-free-games');
 const help = require('./help.json');
-const moment = require('moment-timezone');
 const packageJson = require('./package.json');
 require('dotenv').config();
 
 /** Current bot's timezone */
-const timezone = process.env.TIMEZONE;
-
-if(typeof timezone === 'string') {
-    if(moment.tz.zone(timezone)) {
-        moment.tz.setDefault(timezone);
-        Utils.log(`Running on configured ${moment.defaultZone.name} timezone`);
-    }
-    else {
-        moment.tz.setDefault(Intl.DateTimeFormat().resolvedOptions().timeZone);
-        Utils.log(`Invalid timezone given : ${timezone}, running on fallback ${moment.defaultZone.name} timezone`);
-    }
-}
-else {
-    moment.tz.setDefault(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    Utils.log(`No timezone provided, running on ${moment.defaultZone.name} timezone`);
-}
+Utils.log(`Running on ${Utils.getTimeZone()} timezone`);
 
 /**
  * Class wrapping a simple rule to run a job once a week
@@ -232,7 +216,7 @@ function games(channel, args) {
  * @param {!Discord.Channel} channel target channel
  */
 function about(channel) {
-    channel.send(`Free Games Bot version ${version} running in ${timezone} time zone.`);
+    channel.send(`Free Games Bot version ${version} running in ${Utils.getTimeZone()} time zone.`);
 }
 
 /**
@@ -328,7 +312,7 @@ function schedule(channel, rule = weeklyAnnounceRule, announce = true) {
     job = Scheduler.scheduleJob(rule, jobFct);
     jobs[channel.id] = job;
     if(job) {
-        Utils.log(`Scheduled notification on ${channel.guild.name}#${channel.name} (${channel.id}), next one on ${Utils.getDateString(job.nextInvocation().toDate(), null, true)}`);
+        Utils.log(`Scheduled notification on ${channel.guild.name}#${channel.name} (${channel.id}), next one on ${Utils.getDateString(job.nextInvocation().toDate())}`);
     }
     else {
         Utils.log(`Unable to schedule notification on ${channel.guild.name}#${channel.name} (${channel.id}), rescheduling to default ${rule === weeklyAnnounceRule ? 'failed' : ''}`);
