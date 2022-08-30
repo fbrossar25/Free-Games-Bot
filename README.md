@@ -56,5 +56,5 @@ For each commands below, the channel id need to be into the CHANNELS_IDS list of
 |CHANNELS_IDS|List of channels ids where the bot is allowed to posts|`42,9001,4815162342`|
 |CHANNELS_IDS_TO_SCHEDULE|List of channels ids where the bot will automatically schedule on startup. Those ids also needs to be on CHANNELS_IDS|`42,9001`|
 |WEEKLY_ANNOUNCE|Expression used to schedule periodical verification and post of free games. In this exemple, each Thursday at 9am, D:HH:MM format|4:09:00|
-|TIMEZONE|Optionnal, force the bot to execute in a specific timezone, useful when the bot is hosted in another country than your discord channel|`France/Paris`|
+|TZ|Optionnal, force the bot to execute in a specific timezone, useful when the bot is hosted in another country than your discord channel|`France/Paris`|
 
