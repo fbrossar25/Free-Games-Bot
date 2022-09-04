@@ -1,8 +1,14 @@
 const Utils = require('./utils');
-const { epicStore } = require('./stores');
+const { epicStore, Store } = require('./stores');
+/**
+ * @type Map<string, Store>
+ */
 const stores = {
     'epic': epicStore
 };
+/**
+ * @type string[]
+ */
 const knownSources = Object.keys(stores);
 
 function unique(value, index, self) {
@@ -15,6 +21,7 @@ function formatSources(sources) {
 }
 
 module.exports.knownSources = knownSources;
+module.exports.stores = stores;
 
 module.exports.fetch = (sources) => {
     return new Promise((success) => {

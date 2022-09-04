@@ -7,16 +7,15 @@ Bot for discord that fetch free games with a schelued tasks using cron expressio
 npm install
 ```
 Depedencies :
-- [heroku](https://heroku.com/) to deploy, and [dotenv](https://www.npmjs.com/package/dotenv) package in order to read .env file on startup, allowing debugging
 - [discordJS](https://discord.js.org/?source=post_page---------------------------#/) to post messages and wait for commands
-- [moment](https://momentjs.com/) to ease date formatting
+- [dayjs](https://day.js.org/) to ease date formatting
 - [node-schedule](https://www.npmjs.com/package/node-schedule) to schedule notifications using cron expressions and recurency rules
 - [axios](https://www.npmjs.com/package/axios) to make webservices calls to each games stores.
 
 ## How to add this bot in discord
 First, [follow this guide](https://discordjs.guide/).
 
-In discord, copy the channel Id [(requires discord dev mode)](https://www.discordia.me/en/developer-mode) where you want the bot to work, and paste it into .env file, in CHANNELS_IDS value (comma separated). Now the bot will respond its command.
+In discord, copy the channel Id [(requires discord dev mode)](https://www.discordia.me/en/developer-mode) where you want the bot to work, and paste it into `free-games-bot.json` config file, in channelsIds list. Now the bot will respond its command.
 
 This bots needs those permissions in order to work properly :
  - Read messages
@@ -27,7 +26,7 @@ This bots needs those permissions in order to work properly :
 
 
 ## Usage
-For each commands below, the channel id need to be into the CHANNELS_IDS list of the .env file in order for the bot to respond.
+For each commands below, the channel id need to be into the channelsIds list of the `free-games-bot.json` config file in order for the bot to respond.
 
 ```
 !games [options]
@@ -35,7 +34,7 @@ For each commands below, the channel id need to be into the CHANNELS_IDS list of
 - Without any options, the bot will fetch free games on each programmed websites
 - Options are :
   - ping : basic ping response
-  - schedule : create a scheduled tasks which will run in the channel using WEEKLY_ANNOUNCE value in .env file by default. If cron expression or simple D:HH:MM rule is provided, will attempt to use it or fallback to default rule defined in .env file. See [cron expressions here](https://crontab.guru/every-day-at-1am) to learn more about cron.
+  - schedule : create a scheduled tasks which will run in the channel using weeklyAnnounce value in `free-games-bot.json` config file by default. If cron expression or simple D:HH:MM rule is provided, will attempt to use it or fallback to default rule defined in `free-games-bot.json` config file. See [cron expressions here](https://crontab.guru/every-day-at-1am) to learn more about cron.
   - cancel : cancel scheduled tasks for this channel
   - next : print when the next notofications will occur
   - help : print help about the bot's command with no arguments
@@ -46,15 +45,33 @@ For each commands below, the channel id need to be into the CHANNELS_IDS list of
 ![Example 1](./img/cancel.png)
 ![Example 2](./img/schedule.png)
 
-## .env file
+## free-games-bot.json file
+
+This file will be written with default values if it does not exists in the /conf directory of the container.
+|Name|Description|Example value|
+|---|---|---|
+|token|Token of your boot, see [this](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token)|`4815162342`|
+|channelsIds|List of channels ids where the bot is allowed to posts|`42,9001,4815162342`|
+|channelsIdsToSchedule|List of channels ids where the bot will automatically schedule on startup. Those ids also needs to be on CHANNELS_IDS|`42,9001`|
+|weeklyAnnounce|Expression used to schedule periodical verification and post of free games. In this exemple, each Thursday at 9pm, D:HH:MM format.|`4:21:00`|
+
+## Environment variables
 
 |Name|Description|Example value|
 |---|---|---|
-|PREFIX|Prefix for each command|`!`|
-|COMMAND|Command name for this bot|`games`|
-|TOKEN|Token of your boot, see [this](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token)|`4815162342`|
-|CHANNELS_IDS|List of channels ids where the bot is allowed to posts|`42,9001,4815162342`|
-|CHANNELS_IDS_TO_SCHEDULE|List of channels ids where the bot will automatically schedule on startup. Those ids also needs to be on CHANNELS_IDS|`42,9001`|
-|WEEKLY_ANNOUNCE|Expression used to schedule periodical verification and post of free games. In this exemple, each Thursday at 9am, D:HH:MM format|4:09:00|
-|TZ|Optionnal, force the bot to execute in a specific timezone, useful when the bot is hosted in another country than your discord channel|`France/Paris`|
+|CONF_DIR (Optional)|Directory where the free-games-bot.json file will be read. A default one will be written there if not present and the directory exists. Defaults to `/conf`. Not trailing `/`. |`/opt/free-games-bot`|
+|TZ (Optional)|Timezone in which the bot will be running|`Europe/Paris`|
+
+## Set timezone
+
+- With Docker, run the container with an extra argument `-e TZ=France/Paris` to set a specific timezone, otherwise it will use the system default.
+- With Node from a unix shell : `TZ=France/Paris node index.js`
+
+## Running with Node.js
+
+TODO
+
+## Running with Docker
+
+TODO
 

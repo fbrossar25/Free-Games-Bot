@@ -1,6 +1,6 @@
 FROM node:16
 
-WORKDIR /usr/src/app
+WORKDIR /opt/free-games-bot
 
 COPY package*.json ./
 
@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-VOLUME /log
+VOLUME /opt/free-games-bot/conf
 
-CMD [ "node", "index.js", "&>", "/log/free-games-bot.log"]
+CMD ["node", "index.js"]

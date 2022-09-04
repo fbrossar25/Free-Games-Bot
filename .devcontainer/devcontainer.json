@@ -2,5 +2,5 @@
 	"name": "free-games-bot dev container",
 	"context": "..",
 	"dockerFile": "../Dockerfile",
-	"mounts": ["source=${localWorkspaceFolder}/log,target=/log,type=bind,consistency=cached"]
+	"mounts": ["source=${localWorkspaceFolder}/conf,target=/opt/free-games-bot/conf,type=bind,consistency=cached"]
 }

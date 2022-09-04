@@ -1,49 +1,56 @@
 {
     "usage": [
-        "Free games bot",
-        "usage : `$prefix$cmd [command]`",
+        "Describe usage of Free games bot",
+        "usage : `/games [command]`",
         "Where command is one of :",
+        "- `fetch` : fetch and display free games, main command of this bot",
         "- `schedule` : schedule free games notifications on this channel",
         "- `next` : Tell the next time this channel will receive notifications",
         "- `cancel` : cancel scheduled notifications on this channel",
         "- `ping` : Will show obi wan kenobi",
-        "- `help` : Show help about a specific command. Example : `$prefix$cmd help next`",
-        "- `sources` : Show a list of compatible sources to use like `$prefix$cmd source1 source2`",
+        "- `help` : Show help about a specific command. Example : `/games help next`",
+        "- `sources` : Show a list of compatible sources to use with fetch command like `/games fetch source1 source2`",
         "- `usage` : Show this list of usable commands",
         "- `about` : Show bot's version and timezone",
-        "If neither command nor sources are provided, will show free games list. To know more : `$prefix$cmd help`"
+        "If neither command nor sources are provided, will show free games list. To know more : `/games help`"
+    ],
+    "fetch": [
+        "List free games among various websites",
+        "usage : `/games fetch [sources]`",
+        "Where sources is optionnal or is a list of known sources. Sources can be listed with `/games sources`",
+        "To know more commands : `/games usage`"
     ],
     "help": [
-        "List free games among various websites",
-        "usage : `$prefix$cmd [sources]`",
-        "Where sources is optionnal or is a list of known sources. Sources can be listed with `$prefix$cmd sources`",
-        "To know more commands : `$prefix$cmd usage`"
+        "Describe a command",
+        "usage : `/games help [command]`",
+        "Where command is a command name known by the bot.",
+        "To know more commands : `/games usage`"
     ],
     "schedule": [
         "Schedule periodic notifications on this channel",
-        "usage : `$prefix$cmd schedule [expr]`",
+        "usage : `/games schedule [expr]`",
         "Where expr is an optionnal cron expression. Examples",
-        "- Schedule notifications every Thursday, at 9am (default): `$prefix$cmd schedule 0 9 * * THU`",
+        "- Schedule notifications every Thursday, at 9am (default): `/games schedule 0 9 * * THU`",
         "See more about cron expressions `[here](https://crontab.guru/#0_9_*_*_THU)`"
     ],
     "next": [
         "Show if and when will occur the next periodic notifications",
-        "usage : `$prefix$cmd next`"
+        "usage : `/games next`"
     ],
     "cancel": [
         "Cancel any periodic notifications on this channel",
-        "usage : `$prefix$cmd cancel`"
+        "usage : `/games cancel`"
     ],
     "ping": [
         "Will show obi wan kenobi",
-        "usage : `$prefix$cmd ping`"
+        "usage : `/games ping`"
     ],
     "sources": [
         "Show a list of compatible sources",
-        "usage : `$prefix$cmd sources`"
+        "usage : `/games sources`"
     ],
     "about": [
         "Show bot's currently running version and timezone",
-        "usage : `$prefix$cmd about`"
+        "usage : `/games about`"
     ]
 }
