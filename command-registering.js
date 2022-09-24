@@ -1,6 +1,6 @@
 const { config } = require('./config');
 const Utils = require('./utils');
-const { REST, Routes, Collection, SlashCommandBuilder } = require('discord.js');
+const { REST, Routes, Collection, RequestManager, Client } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -8,10 +8,15 @@ const token = config.token;
 const rest = new REST({ version: '10' }).setToken(token);
 
 /**
- *  @typedef {Object} CommandModule
- *  @property {SlashCommandBuilder} data
- *  @property {CommandExecutionFunction} execute
-*/
+ * @callback ExecuteFunction
+ * @param {import('discord.js').Interaction} interaction
+ * @returns {void}
+ */
+/**
+ * @typedef {Object} CommandModule
+ * @property {import('discord.js').SlashCommandBuilder} data
+ * @property {ExecuteFunction} execute
+ */
 
 module.exports = {
     async registerCommands() {
@@ -38,5 +43,5 @@ module.exports = {
             Utils.logError('Unexpect error while registering commands', error);
             process.exit(1);
         }
-    },
+    }
 };

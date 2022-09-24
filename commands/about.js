@@ -6,6 +6,7 @@ const packageJson = require('../package.json');
 /** Running version of the bot */
 const version = process.env.npm_package_version || packageJson.version;
 
+/** @type {import('../command-registering').CommandModule} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('about')

@@ -1,17 +1,10 @@
-/**
- * @callback ExecuteFunction
- * @param {import('discord.js').Interaction} interaction
- * @returns {InteractionResponse}
- */
-/**
- * @typedef {Object} CommandModule
- * @property {SlashCommandBuilder} data
- * @property {ExecuteFunction} execute
- */
-
 const Utils = require('./utils');
 const { config } = require('./config');
-const { Client, IntentsBitField } = require('discord.js');
+const { Client, IntentsBitField, ChannelType } = require('discord.js');
+const { addExitCallback } = require('catch-exit');
+const { gracefulShutdownSheculedJobs } = require('./commands/schedule');
+const { registerCommands } = require('./command-registering');
+const { schedule, weeklyAnnounceRule } = require('./commands/schedule');
 
 /** Current bot's timezone */
 Utils.log(`Running on ${Utils.getTimeZone()} timezone`);
@@ -27,23 +20,47 @@ intents.add(
 
 /** This bot instance */
 const client = new Client({ intents });
-(async () => client.commands = await require('./command-registering').registerCommands())();
+(async () => client.commands = await registerCommands())();
 
 client.on('ready', async () => {
     Utils.log(`Logged in as ${client.user.tag}!`);
     // TODO : schedule weekly from conf
-    // if (Array.isArray(gamesChannelsIds) && Array.isArray(gamesChannelsIdsToSchedule)) {
-    //     gamesChannelsIdsToSchedule.forEach((chanId) => {
-    //         if (gamesChannelsIds.includes(chanId)) {
-    //             client.channels.fetch(chanId).then(channel => schedule(channel, weeklyAnnounceRule, false));
-    //         }
-    //     });
-    // }
+    if (config.guilds) {
+        for (const guildId in config.guilds) {
+            const channelIdsToSchedule = config.guilds[guildId];
+            if (Array.isArray(channelIdsToSchedule) && channelIdsToSchedule.length > 0) {
+                for (const channelId of channelIdsToSchedule) {
+                    Utils.log(`Scheduling for ${guildId}#${channelId}`);
+                    (async () => {
+                        const channel = await client.channels.fetch(channelId);
+                        channel.client = client;
+                        if (!channel) {
+                            Utils.log(`Channel ${guildId}#${channelId} not found`);
+                            return;
+                        }
+                        else if (channel.type !== ChannelType.GuildText) {
+                            Utils.log(`Channel ${guildId}#${channelId} is not a text channel`);
+                            return;
+                        }
+                        await schedule(weeklyAnnounceRule, channel);
+                    })();
+                }
+            }
+        }
+    }
+    /*     if (Array.isArray(configgamesChannelsIds) && Array.isArray(gamesChannelsIdsToSchedule)) {
+            gamesChannelsIdsToSchedule.forEach((chanId) => {
+                if (gamesChannelsIds.includes(chanId)) {
+                    client.channels.fetch(chanId).then(channel => schedule(channel, weeklyAnnounceRule, false));
+                }
+            });
+        } */
 });
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
     const { commandName } = interaction;
+    /** @type {import('./command-registering').CommandModule} */
     const command = interaction.client.commands.get(commandName);
     if (!command) {
         Utils.log(`Unknown command ${commandName}`);
@@ -65,3 +82,10 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.login(token);
+
+addExitCallback(async () => {
+    Utils.log('Exiting...');
+    gracefulShutdownSheculedJobs();
+    Utils.log('Destroying client');
+    client.destroy();
+});

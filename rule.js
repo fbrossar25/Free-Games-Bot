@@ -1,5 +1,6 @@
 const Utils = require('./utils');
 const { config } = require('./config');
+const { RecurrenceRule } = require('node-schedule');
 
 /** D:HH:MM format with optional leading 0 for hours */
 const ruleRegexp = /^[0-6]:(?:0?\d|1\d|2[0-3]):[0-5][0-9]$/;
@@ -33,6 +34,19 @@ class SimpleRule {
         const hourIsValid = this.hour >= 0 && this.hour <= 23;
         const minuteIsValid = this.minute >= 0 && this.minute <= 59;
         return dayOfWeekIsValid && hourIsValid && minuteIsValid;
+    }
+
+    /**
+     * Returns a corresponding new instance of RecurrenceRule
+     * @returns {RecurrenceRule}
+     */
+    toRecurrenceRule() {
+        const rule = new RecurrenceRule();
+        rule.dayOfWeek = this.dayOfWeek;
+        rule.hour = this.hour;
+        rule.minute = this.minute;
+        rule.tz = Utils.getTimeZone();
+        return rule;
     }
 }
 

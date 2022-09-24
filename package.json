@@ -1,14 +1,15 @@
 {
     "name": "free-games-bot",
-    "version": "2.0.0-SNAPSHOT",
+    "version": "2.0.0",
     "description": "Free games bot for discord",
     "main": "index.js",
     "scripts": {
-        "docker-run": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot",
-        "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw -exec fbrossar25/free-games-bot /bin/bash",
-        "docker-build": "docker build --tag fbrossar25/free-games-bot .",
-        "start": "TZ=Europe/Paris CONF_DIR=$(pwd)/conf node index.js",
-        "dev": "nodemon --inspect index.js"
+        "docker-run": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:$npm_package_version",
+        "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw -exec fbrossar25/free-games-bot:$npm_package_version /bin/bash",
+        "docker-build": "docker build --tag fbrossar25/free-games-bot:$npm_package_version .",
+        "start": "TZ=Europe/Paris CONF_DIR=$(pwd)/conf node $npm_package_main",
+        "dev": "nodemon --inspect $npm_package_main",
+        "test": "jest --config ./jest.config.json"
     },
     "repository": {
         "type": "git",
@@ -29,6 +30,7 @@
     "dependencies": {
         "axios": "^0.27.2",
         "bufferutil": "^4.0.6",
+        "catch-exit": "^1.2.2",
         "dayjs": "^1.11.5",
         "discord.js": "^14.3.0",
         "erlpack": "github:discord/erlpack",
@@ -41,6 +43,8 @@
         "node": ">=16.17.0"
     },
     "devDependencies": {
-        "eslint": "^8.23.0"
+        "@types/jest": "^29.0.3",
+        "eslint": "^8.23.0",
+        "jest": "^29.0.3"
     }
 }

@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { helpString } = require('./help');
 
+/** @type {import('../command-registering').CommandModule} */
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('usage')

@@ -1,7 +1,7 @@
 {
     "usage": [
         "Describe usage of Free games bot",
-        "usage : `/games [command]`",
+        "usage : `/[command]`",
         "Where command is one of :",
         "- `fetch` : fetch and display free games, main command of this bot",
         "- `schedule` : schedule free games notifications on this channel",
@@ -16,41 +16,38 @@
     ],
     "fetch": [
         "List free games among various websites",
-        "usage : `/games fetch [sources]`",
+        "usage : `/fetch [sources]`",
         "Where sources is optionnal or is a list of known sources. Sources can be listed with `/games sources`",
-        "To know more commands : `/games usage`"
+        "To know more commands : `/usage`"
     ],
     "help": [
         "Describe a command",
-        "usage : `/games help [command]`",
+        "usage : `/help [command]`",
         "Where command is a command name known by the bot.",
-        "To know more commands : `/games usage`"
+        "To know more commands : `/usage`"
     ],
     "schedule": [
         "Schedule periodic notifications on this channel",
-        "usage : `/games schedule [expr]`",
-        "Where expr is an optionnal cron expression. Examples",
-        "- Schedule notifications every Thursday, at 9am (default): `/games schedule 0 9 * * THU`",
+        "usage : `/schedule [expr]`",
+        "Where expr is either a cron expression or a SimpleRule `D:HH:MM` expression. Examples",
+        "- (CRON) Schedule notifications every Thursday, at 9am (default): `/schedule 0 9 * * THU`",
+        "- (SimpleRule) Schedule notifications every Thursday, at 9am (default): `/schedule 4:09:00`. Uses 24-Hours format.",
         "See more about cron expressions `[here](https://crontab.guru/#0_9_*_*_THU)`"
     ],
     "next": [
         "Show if and when will occur the next periodic notifications",
-        "usage : `/games next`"
+        "usage : `/next`"
     ],
     "cancel": [
         "Cancel any periodic notifications on this channel",
-        "usage : `/games cancel`"
+        "usage : `/cancel`"
     ],
     "ping": [
         "Will show obi wan kenobi",
-        "usage : `/games ping`"
-    ],
-    "sources": [
-        "Show a list of compatible sources",
-        "usage : `/games sources`"
+        "usage : `/ping`"
     ],
     "about": [
         "Show bot's currently running version and timezone",
-        "usage : `/games about`"
+        "usage : `/about`"
     ]
 }
