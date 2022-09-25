@@ -1,6 +1,6 @@
 {
 	"name": "free-games-bot dev container",
 	"context": "..",
-	"dockerFile": "../Dockerfile",
+	"dockerFile": "../Dockerfile.dev",
 	"mounts": ["source=${localWorkspaceFolder}/conf,target=/opt/free-games-bot/conf,type=bind,consistency=cached"]
 }
