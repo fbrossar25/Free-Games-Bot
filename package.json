@@ -1,12 +1,13 @@
 {
     "name": "free-games-bot",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Free games bot for discord",
     "main": "index.js",
     "scripts": {
         "docker-run": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:$npm_package_version",
         "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw -exec fbrossar25/free-games-bot:$npm_package_version /bin/bash",
-        "docker-build": "docker build --tag fbrossar25/free-games-bot:$npm_package_version .",
+        "docker-build": "docker build -t fbrossar25/free-games-bot:latest -t fbrossar25/free-games-bot:$npm_package_version .",
+        "docker-push": "docker push fbrossar25/free-games-bot:$npm_package_version && docker push fbrossar25/free-games-bot:latest",
         "start": "TZ=Europe/Paris CONF_DIR=$(pwd)/conf node $npm_package_main",
         "dev": "nodemon --inspect $npm_package_main",
         "test": "jest --config ./jest.config.json"
