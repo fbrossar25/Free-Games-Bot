@@ -1,5 +1,5 @@
 import * as Utils from './utils';
-import { AxiosResponse } from 'axios';
+import {AxiosError, AxiosResponse} from 'axios';
 import axios from 'axios';
 
 /** Extract a list of games of type T from a http response of type R*/
@@ -24,15 +24,27 @@ export type FreeGame = {
 export type FreeGames = FreeGame[];
 
 /** Error thrown when a fetch operation failed */
-export type FetchError = {
+export class FetchError {
     /** Error message */
-    error: string,
+    public error: string;
     /** Source of the error (e.g. epic) */
-    source: string
+    public source: string;
+
+    constructor(error: string, source: string) {
+        this.error = error;
+        this.source = source;
+    }
+}
+
+export class FetchResult {
+    public games: FreeGames;
+    constructor(games: FreeGames) {
+        this.games = games;
+    }
 }
 
 /** Store where to look for free games */
-export class Store<T, R> {
+export class Store<T = unknown, R = unknown> {
 
     public source: string;
     public humanSource: string;
@@ -69,17 +81,20 @@ export class Store<T, R> {
     /**
      * Fetch free games
      */
-    public async fetch(): Promise<{ games: FreeGames } | FetchError> {
+    public async fetch(): Promise<FetchResult|FetchError> {
         let response: AxiosResponse<R>;
         try {
             response = await this.callUrl();
-        }
-        catch (error) {
-            Utils.logError(`[${this.humanSource}] Error ${error.response?.status ?? '<unknown status>'}`, error);
-            return {
-                source: this.source,
-                error: `[${this.humanSource}] Cannot fetch games (see logs)`,
-            };
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                Utils.logError(`[${this.humanSource}] Error ${error.response?.status ?? '<unknown status>'}`, error);
+            } else {
+                Utils.logError(`[${this.humanSource}] Unknown error`, error);
+            }
+            return new FetchError(
+                this.source,
+                `[${this.humanSource}] Cannot fetch games (see logs)`
+            );
         }
 
         // free games detection algorithm
@@ -103,14 +118,13 @@ export class Store<T, R> {
                 }
             }
             Utils.log(`[${this.humanSource}] ${freeGames.length} free games found from response`);
-            return { games: freeGames };
-        }
-        catch (error) {
+            return {games: freeGames};
+        } catch (error) {
             Utils.logError(`[${this.humanSource}] Error while checking free games`, error);
-            return {
-                source: this.source,
-                error: `[${this.humanSource}] Error while checking free games (see logs)`,
-            };
+            return new FetchError(
+                this.source,
+                `[${this.humanSource}] Error while checking free games (see logs)`
+            );
         }
     }
-};
+}

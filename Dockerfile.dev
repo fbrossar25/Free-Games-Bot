@@ -20,4 +20,4 @@ VOLUME /opt/free-games-bot
 
 EXPOSE 9229
 
-CMD ["npx", "nodemon", "src/index.js"]
+CMD ["npx", "nodemon", "src/index.ts"]

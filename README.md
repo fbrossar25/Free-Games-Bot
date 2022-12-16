@@ -65,7 +65,7 @@ This file will be written with default values if it does not exists in the /conf
 ## Set timezone
 
 - With Docker, run the container with an extra argument `-e TZ=France/Paris` to set a specific timezone, otherwise it will use the system default.
-- With Node from a unix shell : `TZ=France/Paris node index.js`
+- With Node from a unix shell : `TZ=France/Paris node index.ts`
 
 ## Running with npm
 

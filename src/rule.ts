@@ -3,7 +3,7 @@ import config from './config';
 import { RecurrenceRule } from 'node-schedule';
 
 /** D:HH:MM format with optional leading 0 for hours */
-const ruleRegexp = /^[0-6]:(?:0?\d|1\d|2[0-3]):[0-5][0-9]$/;
+const ruleRegexp = /^[0-6]:(?:0?\d|1\d|2[0-3]):[0-5]\d$/;
 
 /**
  * Class wrapping a simple rule to run a job once a week
@@ -57,20 +57,22 @@ export class SimpleRule {
 
 /**
  * Check whether the given string is a simple rule in the D:HH:MM format or not
- * @param {?string} rule the rule to check
+ * @param rule the rule to check
  */
-export function isValidRule(rule) {
+export function isValidRule(rule: string): boolean {
     return ruleRegexp.test(rule.trim());
 }
 
+export const hardcodedDefaultRule = new SimpleRule(4, 18, 30);
+
 /**
  * Check if the given rule is valid and returns a SimpleRule instance
- * @param {?string} rule the rule to parse (D:HH:MM format)
- * @param {null|SimpleRule} [defaultRule=null] the default rule to return if rule is not a valid string
+ * @param rule the rule to parse (D:HH:MM format)
+ * @param defaultRule default rule to return if rule is not a valid string
  */
-export function parseRule(rule, defaultRule = null) {
+export function parseRule(rule: string, defaultRule: SimpleRule = hardcodedDefaultRule): SimpleRule {
     if (!isValidRule(rule)) {
-        Utils.log(`${config.weeklyAnnounce} is not a valid rule, must be in D:HH:MM, where D is day of week beetween 0 (Sunday) and 6, HH is hour of day, MM minute of hour`);
+        Utils.log(`${config.weeklyAnnounce} is not a valid rule, must be in D:HH:MM, where D is day of week between 0 (Sunday) and 6, HH is hour of day, MM minute of hour`);
         return defaultRule;
     }
     const ruleParts = rule.trim().split(':');

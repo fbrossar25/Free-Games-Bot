@@ -9,13 +9,16 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "files": [
-    "src/index.js"
+    "src/index"
   ],
   "include": [
-    "./**/*.ts",
-    "./**/*.js"
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.json"
   ],
   "exclude": [
     "node_modules",
