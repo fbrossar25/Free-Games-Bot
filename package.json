@@ -2,7 +2,7 @@
     "name": "free-games-bot",
     "version": "2.0.1",
     "description": "Free games bot for discord",
-    "main": "index.js",
+    "main": "src/index.js",
     "scripts": {
         "docker-run": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:$npm_package_version",
         "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw -exec fbrossar25/free-games-bot:$npm_package_version /bin/bash",
@@ -11,7 +11,10 @@
         "docker-push": "docker push fbrossar25/free-games-bot:$npm_package_version && docker push fbrossar25/free-games-bot:latest",
         "start": "TZ=Europe/Paris CONF_DIR=$(pwd)/conf node $npm_package_main",
         "dev": "nodemon --inspect $npm_package_main",
-        "test": "jest --config ./jest.config.json"
+        "test": "jest --config ./jest.config.json",
+        "check-npm": "$npm_package_name V$npm_package_version : $npm_package_main",
+        "compile": "tsc",
+        "build": "gulp"
     },
     "repository": {
         "type": "git",
@@ -46,7 +49,14 @@
     },
     "devDependencies": {
         "@types/jest": "^29.0.3",
+        "@types/node": "^18.11.15",
         "eslint": "^8.23.0",
-        "jest": "^29.0.3"
+        "gulp": "^4.0.2",
+        "gulp-clean": "^0.4.0",
+        "gulp-sourcemaps": "^3.0.0",
+        "gulp-typescript": "^5.0.1",
+        "jest": "^29.0.3",
+        "nodemon": "^2.0.20",
+        "typescript": "^4.9.4"
     }
 }

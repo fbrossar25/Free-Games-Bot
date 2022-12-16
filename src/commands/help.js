@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const help = require('../help.json');
+const help = require('../../help.json');
 
 
 /**

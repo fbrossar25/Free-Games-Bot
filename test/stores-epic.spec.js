@@ -1,4 +1,4 @@
-const epicStore = require('../stores/epicStore');
+const epicStore = require('../src/stores/epicStore');
 const axios = require('axios').default;
 
 test('To have a response with games', async () => {

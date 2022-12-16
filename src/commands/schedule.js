@@ -136,9 +136,9 @@ async function cancel(channel) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('schedule')
-        .setDescription(require('../help.json')['schedule'][0])
+        .setDescription(require('../../help.json')['schedule'][0])
         .addStringOption(option => option.setName('expr').setDescription('Cron or D:HH:MM expression').setRequired(true)),
-    /** @type {import('..').ExecuteFunction} execute */
+    /** @type {import('../index').ExecuteFunction} execute */
     async execute(interaction) {
         await interaction.deferReply();
         const message = await schedule(interaction.options.getString('expr'), interaction.channel);
@@ -146,7 +146,7 @@ module.exports = {
     },
     schedule,
     nextSchedule,
-    gracefulShutdownSheculedJobs() {
+    gracefulShutdownScheduledJobs() {
         Utils.log(`Canceling ${jobs.size} jobs`);
         for (const jobId of jobs.keys()) {
             jobs.get(jobId).cancel();

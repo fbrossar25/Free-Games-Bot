@@ -5,8 +5,8 @@ const { cancel } = require('./schedule');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('cancel')
-        .setDescription(require('../help.json')['cancel'][0]),
-    /** @type {import('..').ExecuteFunction} execute */
+        .setDescription(require('../../help.json')['cancel'][0]),
+    /** @type {import('../index').ExecuteFunction} execute */
     async execute(interaction) {
         await interaction.deferReply();
         await interaction.editReply(await cancel(interaction.channel));

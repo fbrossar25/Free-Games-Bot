@@ -6,8 +6,8 @@ const { nextSchedule } = require('./schedule');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('next')
-        .setDescription(require('../help.json')['next'][0]),
-    /** @type {import('..').ExecuteFunction} execute */
+        .setDescription(require('../../help.json')['next'][0]),
+    /** @type {import('../index').ExecuteFunction} execute */
     async execute(interaction) {
         await interaction.reply(nextSchedule(interaction.channel));
     },

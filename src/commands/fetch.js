@@ -15,7 +15,7 @@ const { fetch } = require('../fetch');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('fetch')
-        .setDescription(require('../help.json')['fetch'][0]),
+        .setDescription(require('../../help.json')['fetch'][0]),
     /** @type {import('../command-registering').ExecuteFunction} execute */
     async execute(interaction) {
         await interaction.deferReply();

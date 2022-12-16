@@ -108,3 +108,6 @@ config.json
 .vscode
 conf
 free-games-bot.json
+.idea
+dist
+out

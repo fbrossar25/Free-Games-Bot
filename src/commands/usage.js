@@ -5,8 +5,8 @@ const { helpString } = require('./help');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('usage')
-        .setDescription(require('../help.json')['usage'][0]),
-    /** @type {import('..').ExecuteFunction} execute */
+        .setDescription(require('../../help.json')['usage'][0]),
+    /** @type {import('../index').ExecuteFunction} execute */
     async execute(interaction) {
         await interaction.reply(helpString('usage'));
     },

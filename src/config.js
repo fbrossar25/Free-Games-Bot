@@ -13,7 +13,7 @@ if (!fs.existsSync(configDir)) {
 Utils.log(`Reading ${configPath}`);
 if (!fs.existsSync(configPath)) {
     Utils.log(`Writing empty default file into ${configPath}`);
-    fs.writeFileSync(configPath, JSON.stringify(require('./free-games-bot.empty.json'), null, 4));
+    fs.writeFileSync(configPath, JSON.stringify(require('../free-games-bot.empty.json'), null, 4));
 }
 
 /**
