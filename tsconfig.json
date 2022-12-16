@@ -2,15 +2,23 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2022",
-    "sourceMap": true,
-    "outDir": "./dist",
+    "rootDir": "./src/",
+    "outDir": "./out/",
+    "strict": true,
     "allowJs": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true
+    "sourceMap": true,
   },
+  "files": [
+    "src/index.js"
+  ],
   "include": [
-    "./src/**/*"
+    "./**/*.ts",
+    "./**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

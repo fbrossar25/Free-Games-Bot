@@ -15,7 +15,7 @@ gulp.task("build", () => {
 });
 
 gulp.task("clean", () => {
-    return gulp.src(outDir).pipe(clean());
+    return gulp.src(outDir, { allowEmpty: true }).pipe(clean());
 });
 
 exports.default = gulp.series(
