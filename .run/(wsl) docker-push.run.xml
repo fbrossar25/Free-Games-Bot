@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="(wsl) docker-push" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="docker-push" />
+    </scripts>
+    <node-interpreter value="wsl://Ubuntu-20.04@/home/florian/.nvm/versions/node/v18.12.1/bin/node" />
+    <package-manager value="\home\florian\.nvm\versions\node\v18.12.1\bin\yarn" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

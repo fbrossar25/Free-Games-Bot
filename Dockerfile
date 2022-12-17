@@ -21,4 +21,4 @@ RUN yarn global add typescript ts-node \
 
 VOLUME /opt/free-games-bot/conf
 
-CMD ["yarn", "run", "start"]
+CMD ["ts-node", "--transpile-only", "src/index.ts"]
