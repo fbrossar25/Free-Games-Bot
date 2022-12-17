@@ -1,31 +1,45 @@
 import { config } from './config';
 import * as Utils from './utils';
-import { REST, Routes, Collection, Interaction, SlashCommandBuilder } from 'discord.js';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import {REST, Routes, Collection, SlashCommandBuilder, ChatInputCommandInteraction} from 'discord.js';
+import about from './commands/about';
+import cancel from './commands/cancel';
+import fetch from './commands/fetch';
+import help from './commands/help';
+import next from './commands/next';
+import ping from './commands/ping';
+import schedule from './commands/schedule';
+import usage from './commands/usage';
+
 
 const token = config.token;
 const rest = new REST({ version: '10' }).setToken(token);
 
-export type ExecuteFunction = (interaction: Interaction) => Promise<void>;
-export type CommandModule = {
-    data: SlashCommandBuilder,
+export type ExecuteFunction = (interaction: ChatInputCommandInteraction) => Promise<void>;
+
+export type Module<T> = {
+    __esModule: boolean,
+    default: T
+}
+
+export type CommandModuleExport = {
+    data: SlashCommandBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>,
     execute: ExecuteFunction
 }
 
-export async function registerCommands(): Promise<Collection<string, CommandModule>> {
-    const commandsMap = new Collection<string, CommandModule>();
-    const commands = [];
-    const commandsPath = path.join(__dirname, 'commands');
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
+export type CommandModule = Module<CommandModuleExport>;
 
-    for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
-        const command: CommandModule = await import(filePath);
-        commands.push(command.data.toJSON());
-        commandsMap.set(command.data.name, command);
-    }
+export async function registerCommands(): Promise<Collection<string, CommandModuleExport>> {
+    const commandsMap = new Collection<string, CommandModuleExport>()
+    commandsMap.set('about', about);
+    commandsMap.set('cancel', cancel);
+    commandsMap.set('fetch', fetch);
+    commandsMap.set('help', help);
+    commandsMap.set('next', next);
+    commandsMap.set('ping', ping);
+    commandsMap.set('schedule', schedule);
+    commandsMap.set('usage', usage);
 
+    const commands = commandsMap.map((command) => command.data.toJSON());
     try {
         Utils.log('Started refreshing application (/) commands.');
         await rest.put(Routes.applicationCommands(config.applicationId), { body: commands });

@@ -7,7 +7,7 @@ import {
 import { config } from '../config';
 import {parseRule, SimpleRule, isValidRule} from '../rule';
 import * as Scheduler from 'node-schedule';
-import { fetch } from '../fetch';
+import { fetchAll } from '../fetch';
 import * as Utils from '../utils';
 import * as help from '../help.json';
 
@@ -43,7 +43,7 @@ export function nextSchedule(channel: TextBasedChannel): string {
 export async function executeFetchJob(channel: TextChannel) {
     Utils.log(`Scheduled job : Fetching games for channel ${channel.guild.name}#${channel.name} (${channel.guild.id}#${channel.id})`);
 
-    let message = await fetch();
+    let message = await fetchAll();
     message += '\n' + nextSchedule(channel);
     try {
         await channel.send(message);
@@ -148,5 +148,6 @@ export default {
         }
         const message = await schedule(expr, interaction.channel as TextChannel);
         await interaction.editReply(message);
+        return;
     }
 }

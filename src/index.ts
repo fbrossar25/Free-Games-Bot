@@ -1,10 +1,10 @@
 import * as Utils from './utils';
 import { config } from './config';
 import {Client, IntentsBitField, ChannelType, ClientOptions} from 'discord.js';
-import { addExitCallback } from 'catch-exit';
-import {CommandModule, registerCommands} from './command-registering';
-import { schedule, weeklyAnnounceRule, gracefulShutdownScheduledJobs } from './commands/schedule';
+import {CommandModuleExport, registerCommands} from './command-registering';
+import {schedule, weeklyAnnounceRule, gracefulShutdownScheduledJobs } from './commands/schedule';
 import {Collection} from "@discordjs/collection";
+import process from "node:process";
 
 /** Current bot's timezone */
 Utils.log(`Running on ${Utils.getTimeZone()} timezone`);
@@ -13,15 +13,13 @@ Utils.log(`Running on ${Utils.getTimeZone()} timezone`);
 const token = config.token;
 const intents = new IntentsBitField();
 intents.add(
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.MessageContent,
+    IntentsBitField.Flags.Guilds
 );
 
 export class BotClient extends Client {
     public readonly clientRef: Client;
-    public commands!: Collection<string, CommandModule>;
-    constructor(options: ClientOptions, commands: Collection<string, CommandModule>) {
+    public commands!: Collection<string, CommandModuleExport>;
+    constructor(options: ClientOptions, commands: Collection<string, CommandModuleExport>) {
         super(options);
         this.clientRef = this;
         this.commands = commands;
@@ -55,16 +53,24 @@ async function initialScheduleChannelsForGuild(guildId: string, client: BotClien
     }
 }
 
+let currentlyCleaningUp = false;
+const cleanup = async (client: BotClient, signal: string) => {
+    if (currentlyCleaningUp) return;
+    currentlyCleaningUp = true;
+    Utils.log(`Exiting... (caught ${signal})`);
+    await gracefulShutdownScheduledJobs();
+    Utils.log('Destroying client');
+    client.destroy();
+};
+
 registerCommands().then(async commands => {
     /** This bot instance */
-    const client = new BotClient({intents}, commands);
+    const client = new BotClient({intents: intents}, commands);
 
-    addExitCallback(() => {
-        Utils.log('Exiting...');
-        gracefulShutdownScheduledJobs();
-        Utils.log('Destroying client');
-        client.destroy();
-    });
+    // manually code this instead of using exit-hook or catch-exit packages because they don't work ts-node
+    process.once('SIGINT', () => cleanup(client, 'SIGINT')); // ctrl+c
+    process.once('SIGTERM', () => cleanup(client, 'SIGTERM')); // docker stop
+    process.once('exit', () => cleanup(client, 'exit')); // process.exit()
 
     client.on('ready', async () => {
         Utils.log(`Logged in as ${client.user?.tag}!`);

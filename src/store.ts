@@ -1,9 +1,8 @@
 import * as Utils from './utils';
-import {AxiosError, AxiosResponse} from 'axios';
-import axios from 'axios';
+import axios, {AxiosError, AxiosResponse} from 'axios';
 
 /** Extract a list of games of type T from a http response of type R*/
-export type GamesExtractorFunction<T, R = any> = (response: R) => T[];
+export type GamesExtractorFunction<T, R = unknown> = (response: R) => T[];
 /** For a game of type T, indicate if this game is free. */
 export type IsFreeFunction<T> = (game: T) => boolean;
 

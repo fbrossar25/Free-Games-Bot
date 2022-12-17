@@ -10,7 +10,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('about')
         .setDescription(help.about[0]),
-    async execute(interaction: ChatInputCommandInteraction) {
+    async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         await interaction.reply(`Free Games Bot version ${version} running in ${Utils.getTimeZone()} time zone.`);
     },
 }

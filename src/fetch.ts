@@ -1,27 +1,10 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 import * as Utils from './utils';
-import {FetchError, FetchResult, FreeGames, Store} from "./store";
+import {FetchError, FetchResult, FreeGames} from "./store";
+import { epicGameStore } from "./stores/epicStore";
 
-const stores: Store[] = [];
-const storesPath = path.join(__dirname, 'stores');
-Utils.log(`Importing stores from folder ${storesPath}`);
-const storeFiles = fs.readdirSync(storesPath).filter(file => file.endsWith('.js'));
-
-const imports: Promise<Store>[] = storeFiles.map(f => path.join(storesPath, f))
-    .map(p => import(p));
-Promise.allSettled(imports)
-    .then(imports => {
-        // failed imports
-        imports.filter(i => i.status === "rejected").forEach(rejection => Utils.logError(`Import rejected`, rejection));
-        // populating storesMap
-        (imports.filter(i => i.status === "fulfilled" && i.value) as PromiseFulfilledResult<Store>[])
-            .map(i => i.value)
-            .forEach((store: Store) => {
-                stores.push(store);
-                Utils.log(`Store  ${store.source} - ${store.humanSource} imported`);
-            });
-    });
+const stores = [
+    epicGameStore
+];
 
 function extractGamesAndErrors(fetchResults: PromiseFulfilledResult<FetchResult|FetchError>[]): {games: FreeGames, errors: FetchError[]} {
     return fetchResults.reduce<{games: FreeGames, errors: FetchError[]}>((acc, r) => {
@@ -40,7 +23,7 @@ function extractGamesAndErrors(fetchResults: PromiseFulfilledResult<FetchResult|
 /**
  * Fetch free games from all sources and returns the message to send in discord
  */
-export async function fetch() {
+export async function fetchAll() {
     // Calling each stores
     const fetchPromises = stores.map(store =>
         store.fetch(),

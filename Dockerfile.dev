@@ -1,6 +1,15 @@
 FROM node:18-alpine
 
-ENV NODE_ENV=dev PYTHONUNBUFFERED=1 BUILD_APKS="python3 build-base git"
+ENV NODE_ENV=dev \
+    PYTHONUNBUFFERED=1 \
+    BUILD_APKS="python3 build-base git" \
+    TZ=Europe/Paris \
+    CONFIG_DIR=/opt/free-games-bot/conf
+
+VOLUME /opt/free-games-bot
+
+# nodemon inspect port
+EXPOSE 9229
 
 WORKDIR /opt/free-games-bot
 
@@ -10,14 +19,8 @@ RUN apk add --update --no-cache $BUILD_APKS \
     && python3 -m ensurepip \
     && pip3 install --no-cache --upgrade pip setuptools
 
-# Npm layers
-COPY package.json ./
+# Node layer
+RUN yarn global add typescript ts-node nodemon \
+    && yarn install
 
-RUN npm install -g gulp-cli typescript nodemon \
-    && npm install
-
-VOLUME /opt/free-games-bot
-
-EXPOSE 9229
-
-CMD ["npx", "nodemon", "src/index.ts"]
+CMD ["node", "--require", "ts-node/register", "--inspect=0.0.0.0:9229", "src/index.ts"]

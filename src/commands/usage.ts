@@ -2,7 +2,6 @@ import {ChatInputCommandInteraction, SlashCommandBuilder} from 'discord.js';
 import help from '../help.json';
 import {helpString} from './help';
 
-
 export default {
     data: new SlashCommandBuilder()
         .setName('usage')

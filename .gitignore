@@ -109,5 +109,6 @@ config.json
 conf
 free-games-bot.json
 .idea
-dist
 out
+.yarn
+.yarnrc

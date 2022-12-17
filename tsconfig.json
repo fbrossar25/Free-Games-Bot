@@ -1,27 +1,33 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "ES2022",
     "rootDir": "./src/",
     "outDir": "./out/",
     "strict": true,
-    "allowJs": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "sourceMap": true,
+    "module": "commonjs",
+    "target": "ESNext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "sourceMap": false,
+    "baseUrl": "./"
   },
   "files": [
-    "src/index"
+    "src/index.ts"
   ],
   "include": [
     "src/**/*.ts",
-    "src/**/*.js",
-    "src/**/*.json"
+    "src/help.json"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "out"
   ]
 }

@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Dockerfile.dev (debug)" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" port="9229" restartOnDisconnect="true">
-    <method v="2">
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Dockerfile.dev" run_configuration_type="docker-deploy" />
-    </method>
-  </configuration>
-</component>

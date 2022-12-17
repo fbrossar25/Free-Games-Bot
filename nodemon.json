@@ -1,5 +1,17 @@
 {
+  "verbose": true,
+  "events": {
+    "start": "cls || clear"
+  },
   "execMap": {
-    "ts": "node --require ts-node/register"
-  }
+    "ts": "ts-node --require ts-node/register"
+  },
+  "signal": "SIGHUP",
+  "watch": [
+    "src"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "ts,json"
 }
