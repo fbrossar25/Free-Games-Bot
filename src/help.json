@@ -8,16 +8,14 @@
         "- `next` : Tell the next time this channel will receive notifications",
         "- `cancel` : cancel scheduled notifications on this channel",
         "- `ping` : Will show obi wan kenobi",
-        "- `help` : Show help about a specific command. Example : `/games help next`",
-        "- `sources` : Show a list of compatible sources to use with fetch command like `/games fetch source1 source2`",
+        "- `help` : Show help about a specific command. Example : `/help next`",
         "- `usage` : Show this list of usable commands",
         "- `about` : Show bot's version and timezone",
-        "If neither command nor sources are provided, will show free games list. To know more : `/games help`"
+        "If neither command nor sources are provided, will show free games list. To know more : `/help`"
     ],
     "fetch": [
         "List free games among various websites",
-        "usage : `/fetch [sources]`",
-        "Where sources is optionnal or is a list of known sources. Sources can be listed with `/games sources`",
+        "usage : `/fetch`",
         "To know more commands : `/usage`"
     ],
     "help": [
