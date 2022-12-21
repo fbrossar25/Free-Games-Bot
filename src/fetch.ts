@@ -1,9 +1,11 @@
 import * as Utils from './utils';
 import {FetchError, FetchResult, FreeGames} from "./store";
 import { epicGameStore } from "./stores/epicStore";
+import {gog} from "./stores/gog";
 
 const stores = [
-    epicGameStore
+    epicGameStore,
+    gog
 ];
 
 function extractGamesAndErrors(fetchResults: PromiseFulfilledResult<FetchResult|FetchError>[]): {games: FreeGames, errors: FetchError[]} {
