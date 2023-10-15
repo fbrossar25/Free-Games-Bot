@@ -70,6 +70,7 @@ export async function doSchedule(rule: string|SimpleRule, channel: TextChannel) 
     if (job) {
         jobs.set(channel.id, job);
         Utils.log(`Scheduled notification on ${guildName}#${channel.name} (${channel.guildId}#${channel.id}), next one on ${Utils.getDateString(job.nextInvocation())}`);
+        // TODO write to config
     }
     else {
         const defaultRuleFailed = rule === weeklyAnnounceRule;
@@ -97,10 +98,11 @@ export async function schedule(rule: string|SimpleRule, channel: TextChannel): P
             parsedRule = rule.trim();
         }
     }
-    else {
+    else if(SimpleRule.isSimpleRuleInstance(rule)) { // check type at runtime
         parsedRule = rule;
     }
-    return doSchedule(parsedRule ?? weeklyAnnounceRule, channel);
+    if(!parsedRule) return Promise.resolve(`invalid rule : ${JSON.stringify(rule, null, 4)}`);
+    return doSchedule(parsedRule, channel);
 }
 
 /**

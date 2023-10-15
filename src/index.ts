@@ -26,7 +26,7 @@ export class BotClient extends Client {
     }
 }
 
-async function initialScheduleChannel(guildId: string, channelId: string, client: BotClient): Promise<void> {
+async function initialScheduleChannel(guildId: string, channelId: string, client: BotClient, customSchedule: string|null=null): Promise<void> {
     if(!channelId) return;
     Utils.log(`Scheduling for ${guildId}#${channelId}`);
     const channel = await client.channels.fetch(channelId);
@@ -42,14 +42,18 @@ async function initialScheduleChannel(guildId: string, channelId: string, client
         Utils.log(`Channel ${guildId}#${channelId} is not a text channel`);
         return;
     }
-    await schedule(weeklyAnnounceRule, channel);
+    await schedule(typeof customSchedule === 'string' ? customSchedule : weeklyAnnounceRule, channel);
 }
 
 async function initialScheduleChannelsForGuild(guildId: string, client: BotClient): Promise<void> {
     const channelIdsToSchedule = config.guilds[guildId];
     if (!Array.isArray(channelIdsToSchedule) || channelIdsToSchedule.length < 1) return;
     for (const channelId of channelIdsToSchedule) {
-        await initialScheduleChannel(guildId, channelId, client);
+        if (typeof channelId === 'string') {
+            await initialScheduleChannel(guildId, channelId, client);
+        } else {
+            await initialScheduleChannel(guildId, channelId.id, client, channelId.schedule);
+        }
     }
 }
 

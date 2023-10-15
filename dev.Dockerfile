@@ -20,7 +20,7 @@ RUN apk add --update --no-cache $BUILD_APKS \
     && pip3 install --no-cache --upgrade pip setuptools
 
 # Node layer
-RUN yarn global add typescript ts-node nodemon \
-    && yarn install
+RUN yarn global add typescript ts-node nodemon @types/node@^18.18.5
+RUN yarn install
 
 CMD ["node", "--require", "ts-node/register", "--inspect=0.0.0.0:9229", "src/index.ts"]

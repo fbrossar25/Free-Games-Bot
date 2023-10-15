@@ -9,9 +9,10 @@ test
 .run
 .eslintignore
 .eslintrc.json
+.prettierrc
 .gitignore
 .git
-jest.config.json
+jest.config.*
 nodemon.json
 start.ps1
 img

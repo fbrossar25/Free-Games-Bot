@@ -1,12 +1,9 @@
-import * as Utils from './utils';
-import {FetchError, FetchResult, FreeGames} from "./store";
+import * as Utils from "./utils";
+import { FetchError, FetchResult, FreeGames } from "./store";
 import { epicGameStore } from "./stores/epicStore";
-import {gog} from "./stores/gog";
+import { gog } from "./stores/gog";
 
-const stores = [
-    epicGameStore,
-    gog
-];
+const stores = [epicGameStore, gog];
 
 function extractGamesAndErrors(fetchResults: PromiseFulfilledResult<FetchResult|FetchError>[]): {games: FreeGames, errors: FetchError[]} {
     return fetchResults.reduce<{games: FreeGames, errors: FetchError[]}>((acc, r) => {
@@ -53,7 +50,7 @@ export async function fetchAll() {
     } else {
         lines.push('Free games this week !');
         for (const game of games) {
-            lines.push(`${game.name} ${game.url}`);
+            lines.push(`- ${game.name} ${game.url}`);
         }
     }
 

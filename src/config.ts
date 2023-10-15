@@ -1,5 +1,6 @@
 import * as Utils from './utils';
 import * as fs from 'fs';
+import * as process from "process";
 
 // loading config
 const configDir = process.env.CONF_DIR ?? `${process.cwd() ?? ''}/conf`;
@@ -15,6 +16,13 @@ if (!fs.existsSync(configPath)) {
     Utils.log(`Writing empty default file into ${configPath}`);
     fs.copyFileSync('../free-games-bot.empty.json', configPath);
 }
+
+export type ChannelScedule = {
+    id: string;
+    schedule: string;
+}
+
+export type GuildSchedule = Array<string | ChannelScedule>
 
 export type ConfigObject = {
     /**
@@ -38,16 +46,21 @@ export type ConfigObject = {
      *  "7": ["90"]
      * }
      */
-    guilds: { [guildId: string]: string[] };
+    guilds: { [guildId: string]: GuildSchedule };
     /**
      * Default value of weekly announce to be set for each channel in guilds object
      * in D:HH:MM format with optional leading 0 for hours
      */
     weeklyAnnounce: string;
+    dev?: boolean;
 }
 
 /**
  * Bot's configuration JSON
  */
 export const config: ConfigObject = JSON.parse(fs.readFileSync(configPath, "utf8"));
+
+if(process.env.DEV === ('true' || '1')) {
+    config.dev = true;
+}
 export default config;

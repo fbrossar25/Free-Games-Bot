@@ -13,7 +13,7 @@
             </DockerPortBindingImpl>
           </list>
         </option>
-        <option name="sourceFilePath" value="Dockerfile.dev" />
+        <option name="sourceFilePath" value="dev.Dockerfile" />
         <option name="volumeBindings">
           <list>
             <DockerVolumeBindingImpl>

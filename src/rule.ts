@@ -53,6 +53,13 @@ export class SimpleRule {
         rule.tz = Utils.getTimeZone();
         return rule;
     }
+
+    static isSimpleRuleInstance(rule: null|object): boolean {
+        if(!rule) return false;
+        // must contain all these properties
+        return['dayOfWeek', 'hour', 'minute', 'checkValidity', 'toRecurrenceRule']
+            .findIndex((prop) => !(prop in rule)) < 0;
+    }
 }
 
 /**
