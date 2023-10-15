@@ -9,7 +9,6 @@
         "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw -exec fbrossar25/free-games-bot:$npm_package_version /bin/bash",
         "docker-build-dev": "docker build -f dev.Dockerfile -t fbrossar25/free-games-bot:dev .",
         "docker-build": "docker build -f Dockerfile -t fbrossar25/free-games-bot:latest -t fbrossar25/free-games-bot:$npm_package_version .",
-        "docker-build-v2": "docker build -f Dockerfile -t fbrossar25/free-games-bot:test-v2 .",
         "docker-push": "docker push fbrossar25/free-games-bot:$npm_package_version && docker push fbrossar25/free-games-bot:latest",
         "start": "TZ=Europe/Paris CONF_DIR=$(pwd)/conf ts-node $npm_package_main",
         "start-prod": "ts-node $npm_package_main",
