@@ -85,12 +85,17 @@ export const epicGameStore = new Store<EpicGame, EpicStoreResponseData>(
     },
     (game) => game.title,
     (game) => {
-        const slug =
+        let slug =
             game.catalogNs.mappings?.find(
                 (mapping) => mapping.pageType === "productHome"
-            )?.pageSlug ??
-            game.urlSlug ??
-            game.productSlug;
+            )?.pageSlug ?? game.urlSlug;
+        if (
+            RegExp(/^mysterygame-\d+$/).exec(slug) &&
+            game.productSlug != null &&
+            game.productSlug.length > 0
+        ) {
+            slug = game.productSlug;
+        }
         const typeSlug = game.offerType === "BUNDLE" ? "bundles" : "p";
         return `https://store.epicgames.com/fr/${typeSlug}/${slug}`;
     }
