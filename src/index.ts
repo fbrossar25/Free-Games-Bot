@@ -1,9 +1,8 @@
-import * as Utils from './utils';
-import { config } from './config';
-import {Client, IntentsBitField, ChannelType, ClientOptions} from 'discord.js';
-import {CommandModuleExport, registerCommands} from './command-registering';
-import {schedule, weeklyAnnounceRule, gracefulShutdownScheduledJobs } from './commands/schedule';
-import {Collection} from "@discordjs/collection";
+import * as Utils from "./utils";
+import { config } from "./config";
+import { ChannelType, Client, ClientOptions, Collection, IntentsBitField } from "discord.js";
+import { CommandModuleExport, registerCommands } from "./command-registering";
+import { gracefulShutdownScheduledJobs, schedule, weeklyAnnounceRule } from "./commands/schedule";
 import process from "node:process";
 
 /** Current bot's timezone */
@@ -63,8 +62,8 @@ const cleanup = async (client: BotClient, signal: string) => {
     currentlyCleaningUp = true;
     Utils.log(`Exiting... (caught ${signal})`);
     await gracefulShutdownScheduledJobs();
-    Utils.log('Destroying client');
-    client.destroy();
+    Utils.log("Destroying client");
+    await client.destroy();
 };
 
 registerCommands().then(async commands => {
