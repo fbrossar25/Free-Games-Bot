@@ -10,5 +10,3 @@ services:
     volumes:
       - .:/app
       - ./conf:/app/conf
-    stdin_open: true
-    tty: true
