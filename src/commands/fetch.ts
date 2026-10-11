@@ -1,7 +1,6 @@
 import {
     ChatInputCommandInteraction,
     SlashCommandBuilder,
-    TextChannel,
 } from "discord.js";
 import * as Utils from "../utils.ts";
 import { fetchAll } from "../fetch.ts";
