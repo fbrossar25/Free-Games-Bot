@@ -23,6 +23,4 @@ RUN yarn install --immutable --ignore-scripts \
 
 VOLUME $APP_DIR/conf
 
-USER node
-
 CMD ["node", "src/index.ts"]

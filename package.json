@@ -5,9 +5,9 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "docker-run": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:$npm_package_version",
-    "docker-run-dev": "docker run --rm --name free-games-bot-dev -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:dev",
-    "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw -exec fbrossar25/free-games-bot:$npm_package_version /bin/bash",
+    "docker-run": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/app/conf:rw fbrossar25/free-games-bot:$npm_package_version",
+    "docker-run-dev": "docker run --rm --name free-games-bot-dev -it -v $(pwd)/conf:/app/conf:rw fbrossar25/free-games-bot:dev",
+    "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/app/conf:rw -exec fbrossar25/free-games-bot:$npm_package_version /bin/sh",
     "docker-build-dev": "docker build -f dev.Dockerfile -t fbrossar25/free-games-bot:dev .",
     "docker-build": "docker build -f Dockerfile -t fbrossar25/free-games-bot:latest -t fbrossar25/free-games-bot:$npm_package_version .",
     "docker-push": "docker push fbrossar25/free-games-bot:$npm_package_version && docker push fbrossar25/free-games-bot:latest",

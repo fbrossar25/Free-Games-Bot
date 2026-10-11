@@ -18,8 +18,9 @@ export default {
             `Fetching games for channel ${interaction.guild?.name}#${interaction.channel && "name" in interaction.channel ? interaction.channel.name : "<unknown_name>"} (${interaction.guildId}#${interaction.channel?.id}) asked by ${interaction.user.username} (${interaction.user.id})`
         );
         try {
+            const [embed] = await fetchAll(true);
             await interaction.editReply({
-                embeds: [await fetchAll(interaction.channel, true)],
+                embeds: [embed],
             });
         } catch (error) {
             Utils.logError("Error while replying", error);
