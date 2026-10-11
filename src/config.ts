@@ -38,7 +38,9 @@ export type ConfigObject = {
     /** Discord app Id */
     applicationId: string;
     /** Discord app token */
-    token: string;
+  token: string;
+    /** API key for acces to isThereAnyDeals API */
+    isThereAnyDealsAPIKey: string;
     /** Map of channels Ids, by their guild Ids
      * @example
      * {
@@ -47,11 +49,6 @@ export type ConfigObject = {
      * }
      */
     guilds: { [guildId: string]: GuildSchedule };
-    /**
-     * Default value of weekly announce to be set for each channel in guilds object
-     * in D:HH:MM format with optional leading 0 for hours
-     */
-    weeklyAnnounce: string;
     dev?: boolean;
 }
 
@@ -60,7 +57,7 @@ export type ConfigObject = {
  */
 export const config: ConfigObject = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
-if(process.env.DEV === 'true' || process.env.DEV === '1') {
+if(process.env.DEV === 'true' || process.env.DEV === '1' || config.dev === true) {
     config.dev = true;
 }
 export default config;

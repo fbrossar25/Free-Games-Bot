@@ -5,10 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /** Running version of the bot */
-const version: string = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'package.json'), 'utf8')).version;
+const version: string = JSON.parse(fs.readFileSync(path.join(import.meta?.dirname ?? __dirname, '..', '..', 'package.json'), 'utf8')).version;
 
-
-/** @type {import('../command-registering').CommandModule} */
 export default {
     data: new SlashCommandBuilder()
         .setName('about')

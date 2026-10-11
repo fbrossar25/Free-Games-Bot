@@ -4,12 +4,11 @@ services:
     restart: no
     build:
       context: .
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile
     ports:
       - 8080:8080
-      - 9229:9229
     volumes:
       - .:/app
-      - ./free-games-bot.json:/app/conf/free-games-bot.json
+      - ./conf:/app/conf
     stdin_open: true
     tty: true

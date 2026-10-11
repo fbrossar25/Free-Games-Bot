@@ -4,7 +4,6 @@
     "outDir": "./out/",
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
-    "erasableSyntaxOnly": true,
     "noEmit": true,
     "strict": true,
     "esModuleInterop": true,
@@ -18,14 +17,13 @@
       "node_modules/@types"
     ],
     "sourceMap": true,
-    "baseUrl": "./"
+    "isolatedModules": true
   },
   "files": [
     "src/index.ts"
   ],
   "include": [
-    "src/**/*.ts",
-    "src/help.json"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,13 +1,10 @@
 import { config } from './config.ts';
 import * as Utils from './utils.ts';
-import {REST, Routes, Collection, SlashCommandBuilder, ChatInputCommandInteraction} from 'discord.js';
+import {REST, Routes, Collection, SlashCommandBuilder, type SlashCommandOptionsOnlyBuilder, type ChatInputCommandInteraction} from 'discord.js';
 import about from './commands/about.ts';
-import cancel from './commands/cancel.ts';
 import fetch from './commands/fetch.ts';
 import help from './commands/help.ts';
-import next from './commands/next.ts';
 import ping from './commands/ping.ts';
-import schedule from './commands/schedule.ts';
 import usage from './commands/usage.ts';
 
 
@@ -22,7 +19,7 @@ export type Module<T> = {
 }
 
 export type CommandModuleExport = {
-    data: SlashCommandBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>,
+    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder,
     execute: ExecuteFunction
 }
 
@@ -31,12 +28,9 @@ export type CommandModule = Module<CommandModuleExport>;
 export async function registerCommands(): Promise<Collection<string, CommandModuleExport>> {
     const commandsMap = new Collection<string, CommandModuleExport>()
     commandsMap.set('about', about);
-    commandsMap.set('cancel', cancel);
     commandsMap.set('fetch', fetch);
     commandsMap.set('help', help);
-    commandsMap.set('next', next);
     commandsMap.set('ping', ping);
-    commandsMap.set('schedule', schedule);
     commandsMap.set('usage', usage);
 
     const commands = commandsMap.map((command) => command.data.toJSON());

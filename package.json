@@ -1,73 +1,62 @@
 {
-    "name": "free-games-bot",
-    "version": "2.3.1",
-    "description": "Free games bot for discord",
-    "main": "src/index.ts",
-    "type": "module",
-    "scripts": {
-        "docker-run": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:$yarn_package_version",
-        "docker-run-dev": "docker run --rm --name free-games-bot-dev -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:dev",
-        "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw -exec fbrossar25/free-games-bot:$yarn_package_version /bin/bash",
-        "docker-build-dev": "docker build -f dev.Dockerfile -t fbrossar25/free-games-bot:dev .",
-        "docker-build": "docker build -f Dockerfile -t fbrossar25/free-games-bot:latest -t fbrossar25/free-games-bot:$yarn_package_version .",
-        "docker-push": "docker push fbrossar25/free-games-bot:$yarn_package_version && docker push fbrossar25/free-games-bot:latest",
-        "start": "TZ=Europe/Paris CONF_DIR=$(pwd)/conf node src/index.ts",
-        "start:win": "powershell ./start.ps1",
-        "test": "jest --config ./jest.config.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/fbrossar25/Free-Games-Bot.git"
-    },
-    "keywords": [
-        "discord",
-        "bot",
-        "free",
-        "games"
-    ],
-    "author": "Florian BROSSARD",
-    "license": "Unlicense",
-    "bugs": {
-        "url": "https://github.com/fbrossar25/Free-Games-Bot/issues"
-    },
-    "homepage": "https://github.com/fbrossar25/Free-Games-Bot#readme",
-    "dependencies": {
-        "@types/jsdom": "^21.1.6",
-        "@types/node": "^18.18.5",
-        "@types/node-schedule": "^2.1.1",
-        "axios": "^1.5.1",
-        "bufferutil": "^4.0.7",
-        "dayjs": "^1.11.10",
-        "discord.js": "^14.14.1",
-        "erlpack": "^0.1.4",
-        "exit-hook": "^4.0.0",
-        "fast-xml-parser": "^5.11.2",
-        "js-convert-case": "^4.2.0",
-        "jsdom": "^23.0.1",
-        "node-schedule": "^2.1.1",
-        "utf-8-validate": "^6.0.3",
-        "zlib-sync": "^0.1.8"
-    },
-    "engines": {
-        "npm": ">=8.0.0",
-        "node": ">=18.0.0",
-        "yarn": ">=1.22.0"
-    },
-    "devDependencies": {
-        "@babel/core": "^7.23.2",
-        "@babel/preset-env": "^7.23.2",
-        "@babel/preset-typescript": "^7.23.2",
-        "@types/jest": "^29.5.5",
-        "@typescript-eslint/eslint-plugin": "^5.46.1",
-        "@typescript-eslint/parser": "^5.46.1",
-        "babel-jest": "^29.7.0",
-        "eslint": "^8.51.0",
-        "eslint-config-prettier": "^9.0.0",
-        "jest": "^29.7.0",
-        "nodemon": "^3.0.1",
-        "prettier": "^3.0.3",
-        "ts-jest": "^29.1.1",
-        "ts-node": "^10.9.1",
-        "typescript": "^5.2.2"
-    }
+  "name": "free-games-bot",
+  "version": "2.3.1",
+  "description": "Free games bot for discord",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "docker-run": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:$yarn_package_version",
+    "docker-run-dev": "docker run --rm --name free-games-bot-dev -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw fbrossar25/free-games-bot:dev",
+    "docker-bash": "docker run --rm --name free-games-bot -it -v $(pwd)/conf:/opt/free-games-bot/conf:rw -exec fbrossar25/free-games-bot:$yarn_package_version /bin/bash",
+    "docker-build-dev": "docker build -f dev.Dockerfile -t fbrossar25/free-games-bot:dev .",
+    "docker-build": "docker build -f Dockerfile -t fbrossar25/free-games-bot:latest -t fbrossar25/free-games-bot:$yarn_package_version .",
+    "docker-push": "docker push fbrossar25/free-games-bot:$yarn_package_version && docker push fbrossar25/free-games-bot:latest",
+    "start": "TZ=Europe/Paris CONF_DIR=$(pwd)/conf node src/index.ts",
+    "start:dev": "DEV=1 TZ=Europe/Paris CONF_DIR=$(pwd)/conf node src/index.ts",
+    "start:win": "powershell ./start.ps1",
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fbrossar25/Free-Games-Bot.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "free",
+    "games"
+  ],
+  "author": "Florian BROSSARD",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/fbrossar25/Free-Games-Bot/issues"
+  },
+  "homepage": "https://github.com/fbrossar25/Free-Games-Bot#readme",
+  "dependencies": {
+    "@types/node": "^26.6.5",
+    "@types/node-schedule": "^2.1.8",
+    "axios": "^1.20.0",
+    "bufferutil": "^4.1.0",
+    "dayjs": "^1.11.23",
+    "discord.js": "^14.27.0",
+    "erlpack": "^0.1.4",
+    "exit-hook": "^5.1.0",
+    "node-schedule": "^2.1.1",
+    "utf-8-validate": "^6.0.6",
+    "zlib-sync": "^0.1.10"
+  },
+  "engines": {
+    "npm": ">=11.0.0",
+    "node": ">=24.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.71.1",
+    "@typescript-eslint/parser": "^8.71.1",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.10",
+    "typescript": "^7.0.2"
+  }
 }

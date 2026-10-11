@@ -1,65 +1,124 @@
 import * as Utils from "./utils.ts";
 import { FetchError, FetchResult, type FreeGames } from "./store.ts";
-import { epicGameStore } from "./stores/epicStore.ts";
-import { gog } from "./stores/gog.ts";
+import {
+    EmbedBuilder,
+    type APIEmbedField,
+    type ColorResolvable,
+    type TextBasedChannel,
+} from "discord.js";
+import { itadStore } from "./stores/isThereAnyDeals.ts";
+import { addGameIdsToDb } from "./db.ts";
 
-const stores = [epicGameStore, gog];
+const stores = [itadStore];
+const gamesAvailableColor: ColorResolvable = "#57F287";
+const noGamesAvailableColor: ColorResolvable = "#FEE75C";
+const errorColor: ColorResolvable = "#ED4245";
 
-function extractGamesAndErrors(fetchResults: PromiseFulfilledResult<FetchResult|FetchError>[]): {games: FreeGames, errors: FetchError[]} {
-    return fetchResults.reduce<{games: FreeGames, errors: FetchError[]}>((acc, r) => {
-        const value = r.value;
-        if ('error' in value) {
-            acc.errors.push(value);
-        } else {
-            for (const game of value.games) {
-                acc.games.push(game);
+function extractGamesAndErrors(
+    fetchResults: PromiseFulfilledResult<FetchResult | FetchError>[]
+): { games: FreeGames; errors: FetchError[] } {
+    return fetchResults.reduce<{ games: FreeGames; errors: FetchError[] }>(
+        (acc, r) => {
+            const value = r.value;
+            if ("error" in value) {
+                acc.errors.push(value);
+            } else {
+                for (const game of value.games) {
+                    acc.games.push(game);
+                }
             }
-        }
-        return acc;
-    }, {games: [], errors: []});
+            return acc;
+        },
+        { games: [], errors: [] }
+    );
 }
 
 /**
  * Fetch free games from all sources and returns the message to send in discord
+ * @returns The EmbedBuilder first, then the number of giveaways total, or -1 if it is a error message.
  */
-export async function fetchAll() {
+export async function fetchAll(
+    includeAlreadyNotified = false
+): Promise<[EmbedBuilder, number]> {
     // Calling each stores
-    const fetchPromises = stores.map(store =>
-        store.fetch(),
+    const fetchPromises = stores.map((store) =>
+        store.fetch(includeAlreadyNotified)
     );
 
     // Merging each stores responses
-    let fetchResults: PromiseFulfilledResult<FetchResult|FetchError>[] = [];
+    let fetchResults: PromiseFulfilledResult<FetchResult | FetchError>[] = [];
     try {
         const promisesResults = await Promise.allSettled(fetchPromises);
-        fetchResults = promisesResults.filter(p => p.status === "fulfilled") as PromiseFulfilledResult<FetchResult|FetchError>[];
+        fetchResults = promisesResults.filter(
+            (p) => p.status === "fulfilled"
+        ) as PromiseFulfilledResult<FetchResult | FetchError>[];
     } catch (error) {
-        Utils.logError('Error while fetching games', error);
+        Utils.logError("Error while fetching games", error);
         try {
-            return `:exploding_head: I was unable to fetch fetch games from those sources : ${stores.map(s => s.humanSource)} :exploding_head:`;
+            return [
+                new EmbedBuilder()
+                    .setColor(errorColor)
+                    .setTitle("🎮 Free games bot 🎮")
+                    .setDescription("💥 Error fetching games 💥")
+                    .setDescription("See bot's server logs for details")
+                    .setTimestamp(),
+                -1,
+            ];
         } catch (error2) {
-            Utils.logError('Error while replying with an error message', error2);
+            Utils.logError(
+                "Error while replying with an error message",
+                error2
+            );
         }
     }
 
     const { games, errors } = extractGamesAndErrors(fetchResults);
 
-    const lines = [];
-    if (games?.length <= 0) {
-        lines.push('No free games for today :(');
-    } else {
-        lines.push('Free games this week !');
-        for (const game of games) {
-            lines.push(`- ${game.name} ${game.url}`);
-        }
-    }
+    if (!includeAlreadyNotified) addGameIdsToDb(games.map((g) => g.id));
 
-    if (errors.length > 0) {
-        const sources = [];
-        for (const error of errors) {
-            sources.push(error.source);
-        }
-        lines.push(`Sadly, I was unable to get games from those sites : ${sources.join()}`);
+    if (games.length === 0 && errors.length === 0) {
+        return [
+            new EmbedBuilder()
+                .setColor(noGamesAvailableColor)
+                .setTitle("🎮 Free games bot 🎮")
+                .setDescription("🙁 No free games available 🙁")
+                .setTimestamp(),
+            0,
+        ];
+    } else if (games.length === 0 && errors.length > 0) {
+        return [
+            new EmbedBuilder()
+                .setColor(errorColor)
+                .setTitle("🎮 Free games bot 🎮")
+                .setDescription("💥 Error fetching games, check bot's logs 💥")
+                .setTimestamp(),
+            -1,
+        ];
     }
-    return lines.join('\n');
+    const embed = new EmbedBuilder()
+        .setColor(gamesAvailableColor)
+        .setTitle("🎮 Free games bot 🎮")
+        .setDescription("🎉 Free games available 🎉")
+        .setTimestamp();
+    const embedFields: APIEmbedField[] = games.map((game) => {
+        const expiryTimestamp = Math.floor(
+            new Date(game.expiry).getTime() / 1000
+        );
+        return {
+            name: game.name,
+            value: `[🎁 Redeem game 🎁](${game.url})\n⏳ Expires : <t:${expiryTimestamp}:F> (<t:${expiryTimestamp}:R>)`,
+            inline: false,
+        };
+    });
+    if (errors.length > 0) {
+        embed.setColor(noGamesAvailableColor);
+        embedFields.push({
+            name: "errors",
+            value: "💥 Some errors happened during this command, check bot's logs 💥",
+            inline: false,
+        });
+    }
+    embed.addFields(embedFields);
+
+    return [embed, games.length];
 }

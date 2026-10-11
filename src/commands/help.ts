@@ -6,9 +6,6 @@ export const help = {
     "usage : `/[command]`",
     "Where command is one of :",
     "- `fetch` : fetch and display free games, main command of this bot",
-    "- `schedule` : schedule free games notifications on this channel",
-    "- `next` : Tell the next time this channel will receive notifications",
-    "- `cancel` : cancel scheduled notifications on this channel",
     "- `ping` : Will show obi wan kenobi",
     "- `help` : Show help about a specific command. Example : `/help next`",
     "- `usage` : Show this list of usable commands",
@@ -25,18 +22,6 @@ export const help = {
     "usage : `/help [command]`",
     "Where command is a command name known by the bot.",
     "To know more commands : `/usage`"
-  ],
-  schedule: [
-    "Schedule periodic notifications on this channel",
-    "usage : `/schedule [expr]`",
-    "Where expr is either a cron expression or a SimpleRule `D:HH:MM` expression. Examples",
-    "- (CRON) Schedule notifications every Thursday, at 9am (default): `/schedule 0 9 * * THU`",
-    "- (SimpleRule) Schedule notifications every Thursday, at 9am (default): `/schedule 4:09:00`. Uses 24-Hours format.",
-    "See more about cron expressions `[here](https://crontab.guru/#0_9_*_*_THU)`"
-  ],
-  next: [
-    "Show if and when will occur the next periodic notifications",
-    "usage : `/next`"
   ],
   cancel: [
     "Cancel any periodic notifications on this channel",

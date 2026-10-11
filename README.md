@@ -34,9 +34,7 @@ For each commands below, the channel id need to be into the channelsIds list of 
 - Without any options, the bot will fetch free games on each programmed websites
 - Options are :
   - ping : basic ping response
-  - schedule : create a scheduled tasks which will run in the channel using weeklyAnnounce value in `free-games-bot.json` config file by default. If cron expression or simple D:HH:MM rule is provided, will attempt to use it or fallback to default rule defined in `free-games-bot.json` config file. See [cron expressions here](https://crontab.guru/every-day-at-1am) to learn more about cron.
   - cancel : cancel scheduled tasks for this channel
-  - next : print when the next notofications will occur
   - help : print help about the bot's command with no arguments
   - usage : print info about all commands of the bot
   - sources : print the list of known sources
@@ -53,19 +51,19 @@ This file will be written with default values if it does not exists in the /conf
 |token|Token of your boot, see [this](https://discordjs.guide/preparations/setting-up-a-bot-application.html#your-token)|`4815162342`|
 |channelsIds|List of channels ids where the bot is allowed to posts|`42,9001,4815162342`|
 |channelsIdsToSchedule|List of channels ids where the bot will automatically schedule on startup. Those ids also needs to be on CHANNELS_IDS|`42,9001`|
-|weeklyAnnounce|Expression used to schedule periodical verification and post of free games. In this exemple, each Thursday at 9pm, D:HH:MM format.|`4:21:00`|
+|isThereAnyDealsAPIKey|Token for [IsThereAnyDeal API](https://isthereanydeal.com/apps/)|`abcdefgh123456`|
 
 ## Environment variables
 
 |Name|Description|Example value|
 |---|---|---|
-|CONF_DIR (Optional)|Directory where the free-games-bot.json file will be read. A default one will be written there if not present and the directory exists. Defaults to `/conf`. Not trailing `/`. |`/opt/free-games-bot`|
+|CONF_DIR (Optional)|Directory where the free-games-bot.json file will be read. A default one will be written there if not present and the directory exists. Defaults to `/conf`. Not trailing `/`. |`/app/conf`|
 |TZ (Optional)|Timezone in which the bot will be running|`Europe/Paris`|
 
 ## Set timezone
 
 - With Docker, run the container with an extra argument `-e TZ=France/Paris` to set a specific timezone, otherwise it will use the system default.
-- With Node from a unix shell : `TZ=France/Paris node index.ts`
+- With Node from a unix shell : `TZ=France/Paris node src/index.ts`
 
 ## Running with npm
 
@@ -88,4 +86,3 @@ Then, create a `free-games-bot.json` configuration file (see example below) and 
 > The container will create a default config file if it doesn't exist in the `/conf` directory when starting.
 
 > If you are using a different config file, make sure it's mounted in the container. See [docker-compose.yml](docker-compose.yml) for an example.
-

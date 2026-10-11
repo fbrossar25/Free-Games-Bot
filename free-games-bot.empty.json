@@ -3,11 +3,11 @@
     "command": "games",
     "applicationId": "<discord bot application id>",
     "token": "<discord token>",
+    "isThereAnyDealsAPIKey": "<register app at https://isthereanydeal.com/apps/>",
     "guilds": {
         "guild-id": [
             "channel-id-1",
             "channel-id-2"
         ]
-    },
-    "weeklyAnnounce": "4:18:30"
+    }
 }
