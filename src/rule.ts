@@ -1,5 +1,5 @@
-import * as Utils from './utils';
-import config from './config';
+import * as Utils from './utils.ts';
+import config from './config.ts';
 import { RecurrenceRule } from 'node-schedule';
 
 /** D:HH:MM format with optional leading 0 for hours */

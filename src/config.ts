@@ -1,4 +1,4 @@
-import * as Utils from './utils';
+import * as Utils from './utils.ts';
 import * as fs from 'fs';
 import * as process from "process";
 
@@ -60,7 +60,7 @@ export type ConfigObject = {
  */
 export const config: ConfigObject = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
-if(process.env.DEV === ('true' || '1')) {
+if(process.env.DEV === 'true' || process.env.DEV === '1') {
     config.dev = true;
 }
 export default config;

@@ -1,5 +1,56 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder} from 'discord.js';
-import help from '../help.json';
+
+export const help = {
+  usage: [
+    "Describe usage of Free games bot",
+    "usage : `/[command]`",
+    "Where command is one of :",
+    "- `fetch` : fetch and display free games, main command of this bot",
+    "- `schedule` : schedule free games notifications on this channel",
+    "- `next` : Tell the next time this channel will receive notifications",
+    "- `cancel` : cancel scheduled notifications on this channel",
+    "- `ping` : Will show obi wan kenobi",
+    "- `help` : Show help about a specific command. Example : `/help next`",
+    "- `usage` : Show this list of usable commands",
+    "- `about` : Show bot's version and timezone",
+    "If neither command nor sources are provided, will show free games list. To know more : `/help`"
+  ],
+  fetch: [
+    "List free games among various websites",
+    "usage : `/fetch`",
+    "To know more commands : `/usage`"
+  ],
+  help: [
+    "Describe a command",
+    "usage : `/help [command]`",
+    "Where command is a command name known by the bot.",
+    "To know more commands : `/usage`"
+  ],
+  schedule: [
+    "Schedule periodic notifications on this channel",
+    "usage : `/schedule [expr]`",
+    "Where expr is either a cron expression or a SimpleRule `D:HH:MM` expression. Examples",
+    "- (CRON) Schedule notifications every Thursday, at 9am (default): `/schedule 0 9 * * THU`",
+    "- (SimpleRule) Schedule notifications every Thursday, at 9am (default): `/schedule 4:09:00`. Uses 24-Hours format.",
+    "See more about cron expressions `[here](https://crontab.guru/#0_9_*_*_THU)`"
+  ],
+  next: [
+    "Show if and when will occur the next periodic notifications",
+    "usage : `/next`"
+  ],
+  cancel: [
+    "Cancel any periodic notifications on this channel",
+    "usage : `/cancel`"
+  ],
+  ping: [
+    "Will show obi wan kenobi",
+    "usage : `/ping`"
+  ],
+  about: [
+    "Show bot's currently running version and timezone",
+    "usage : `/about`"
+  ]
+};
 
 type HelpKey = keyof typeof help;
 
@@ -15,7 +66,7 @@ export function helpString(cmd: HelpKey|string) {
     }
     else if (cmd) {
         // If cmd is undefined then just show help, otherwise show that the command is unknown
-        lines = [`I don't know the '${cmd}' command, use \`/games help\` to know more`].concat(lines);
+        lines = [`I don't know the '${cmd as unknown}' command, use \`/games help\` to know more`].concat(lines);
     }
     return lines.join('\n');
 }

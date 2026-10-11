@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Store } from "../store";
+import { Store } from "../store.ts";
 
 export type PromotionalOffer = {
     startDate: string;

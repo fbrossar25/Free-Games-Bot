@@ -1,11 +1,11 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder} from 'discord.js';
-import * as Utils from '../utils';
-import help from '../help.json';
+import * as Utils from '../utils.ts';
+import { help } from './help.ts';
 import fs from 'node:fs';
 import path from 'node:path';
 
 /** Running version of the bot */
-const version: string = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8')).version;
+const version: string = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'package.json'), 'utf8')).version;
 
 
 /** @type {import('../command-registering').CommandModule} */

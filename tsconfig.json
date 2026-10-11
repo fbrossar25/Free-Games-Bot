@@ -2,21 +2,22 @@
   "compilerOptions": {
     "rootDir": "./src/",
     "outDir": "./out/",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
+    "noEmit": true,
     "strict": true,
-    "module": "commonjs",
-    "target": "ESNext",
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "experimentalDecorators": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
+    "target": "esnext",
     "typeRoots": [
       "node_modules/@types"
     ],
-    "sourceMap": false,
+    "sourceMap": true,
     "baseUrl": "./"
   },
   "files": [

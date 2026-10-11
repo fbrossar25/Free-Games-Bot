@@ -1,6 +1,6 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder, TextChannel} from 'discord.js';
-import { cancel } from './schedule';
-import help from "../help.json";
+import { cancel } from './schedule.ts';
+import { help } from './help.ts';
 
 export default {
     data: new SlashCommandBuilder()

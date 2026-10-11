@@ -1,8 +1,8 @@
-import * as Utils from "./utils";
-import { config } from "./config";
-import { ChannelType, Client, ClientOptions, Collection, IntentsBitField } from "discord.js";
-import { CommandModuleExport, registerCommands } from "./command-registering";
-import { gracefulShutdownScheduledJobs, schedule, weeklyAnnounceRule } from "./commands/schedule";
+import * as Utils from "./utils.ts";
+import { config } from "./config.ts";
+import { ChannelType, Client, type ClientOptions, Collection, IntentsBitField } from "discord.js";
+import { type CommandModuleExport, registerCommands } from "./command-registering.ts";
+import { gracefulShutdownScheduledJobs, schedule, weeklyAnnounceRule } from "./commands/schedule.ts";
 import process from "node:process";
 
 /** Current bot's timezone */
@@ -75,7 +75,7 @@ registerCommands().then(async commands => {
     process.once('SIGTERM', () => cleanup(client, 'SIGTERM')); // docker stop
     process.once('exit', () => cleanup(client, 'exit')); // process.exit()
 
-    client.on('ready', async () => {
+    client.on('clienReady', async () => {
         Utils.log(`Logged in as ${client.user?.tag}!`);
         // TODO : schedule weekly from conf
         if (!config.guilds) return;

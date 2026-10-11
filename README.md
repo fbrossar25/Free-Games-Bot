@@ -73,5 +73,19 @@ This file will be written with default values if it does not exists in the /conf
 
 ## Running with Docker
 
-TODO
+First, make sure you have [Docker](https://www.docker.com/get-started/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
+
+Then, create a `free-games-bot.json` configuration file (see example below) and run:
+
+```bash
+# Build and run the container
+ docker-compose up --build
+
+# Or run in detached mode
+ docker-compose up --build -d
+```
+
+> The container will create a default config file if it doesn't exist in the `/conf` directory when starting.
+
+> If you are using a different config file, make sure it's mounted in the container. See [docker-compose.yml](docker-compose.yml) for an example.
 

@@ -1,0 +1,15 @@
+services:
+  free-games-bot:
+    container_name: free-games-bot
+    restart: no
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    ports:
+      - 8080:8080
+      - 9229:9229
+    volumes:
+      - .:/app
+      - ./free-games-bot.json:/app/conf/free-games-bot.json
+    stdin_open: true
+    tty: true

@@ -1,5 +1,5 @@
-import * as Utils from './utils';
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import * as Utils from './utils.ts';
+import axios, {AxiosError, type AxiosResponse} from 'axios';
 
 /** Extract a list of games of type T from a http response of type R*/
 export type GamesExtractorFunction<T, R = unknown> = (response: R) => T[];

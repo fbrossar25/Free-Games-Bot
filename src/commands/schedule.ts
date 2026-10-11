@@ -1,15 +1,15 @@
 import {
     ChatInputCommandInteraction,
     SlashCommandBuilder,
-    TextBasedChannel,
+    type TextBasedChannel,
     TextChannel
 } from 'discord.js';
-import { config } from '../config';
-import {parseRule, SimpleRule, isValidRule} from '../rule';
+import { config } from '../config.ts';
+import {parseRule, SimpleRule, isValidRule} from '../rule.ts';
 import * as Scheduler from 'node-schedule';
-import { fetchAll } from '../fetch';
-import * as Utils from '../utils';
-import * as help from '../help.json';
+import { fetchAll } from '../fetch.ts';
+import * as Utils from '../utils.ts';
+import { help } from './help.ts';
 
 const cronRegexp = /(((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,6}/;
 
@@ -69,7 +69,7 @@ export async function doSchedule(rule: string|SimpleRule, channel: TextChannel) 
     const guildName = guild.name;
     if (job) {
         jobs.set(channel.id, job);
-        Utils.log(`Scheduled notification on ${guildName}#${channel.name} (${channel.guildId}#${channel.id}), next one on ${Utils.getDateString(job.nextInvocation())}`);
+        Utils.log(`Scheduled notification on ${guildName}#${channel.name} (${channel.guildId}#${channel.id}), next one on ${Utils.getDateString(job.nextInvocation() ?? undefined)}`);
         // TODO write to config
     }
     else {

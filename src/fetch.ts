@@ -1,7 +1,7 @@
-import * as Utils from "./utils";
-import { FetchError, FetchResult, FreeGames } from "./store";
-import { epicGameStore } from "./stores/epicStore";
-import { gog } from "./stores/gog";
+import * as Utils from "./utils.ts";
+import { FetchError, FetchResult, type FreeGames } from "./store.ts";
+import { epicGameStore } from "./stores/epicStore.ts";
+import { gog } from "./stores/gog.ts";
 
 const stores = [epicGameStore, gog];
 

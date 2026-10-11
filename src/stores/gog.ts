@@ -1,4 +1,4 @@
-import {Store} from "../store";
+import {Store} from "../store.ts";
 import {JSDOM} from "jsdom";
 import {toHeaderCase} from "js-convert-case";
 

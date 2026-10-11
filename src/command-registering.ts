@@ -1,14 +1,14 @@
-import { config } from './config';
-import * as Utils from './utils';
+import { config } from './config.ts';
+import * as Utils from './utils.ts';
 import {REST, Routes, Collection, SlashCommandBuilder, ChatInputCommandInteraction} from 'discord.js';
-import about from './commands/about';
-import cancel from './commands/cancel';
-import fetch from './commands/fetch';
-import help from './commands/help';
-import next from './commands/next';
-import ping from './commands/ping';
-import schedule from './commands/schedule';
-import usage from './commands/usage';
+import about from './commands/about.ts';
+import cancel from './commands/cancel.ts';
+import fetch from './commands/fetch.ts';
+import help from './commands/help.ts';
+import next from './commands/next.ts';
+import ping from './commands/ping.ts';
+import schedule from './commands/schedule.ts';
+import usage from './commands/usage.ts';
 
 
 const token = config.token;

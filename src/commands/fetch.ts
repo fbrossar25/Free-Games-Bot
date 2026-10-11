@@ -1,8 +1,8 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder, TextChannel} from 'discord.js';
-import * as Utils from '../utils';
-import { nextSchedule } from './schedule';
-import { fetchAll } from '../fetch';
-import help from '../help.json';
+import * as Utils from '../utils.ts';
+import { nextSchedule } from './schedule.ts';
+import { fetchAll } from '../fetch.ts';
+import { help } from './help.ts';
 
 export default {
     data: new SlashCommandBuilder()
