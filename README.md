@@ -34,10 +34,8 @@ For each commands below, the channel id need to be into the channelsIds list of 
 - Without any options, the bot will fetch free games on each programmed websites
 - Options are :
   - ping : basic ping response
-  - cancel : cancel scheduled tasks for this channel
   - help : print help about the bot's command with no arguments
   - usage : print info about all commands of the bot
-  - sources : print the list of known sources
 
 ## Examples
 ![Example 1](./img/cancel.png)
