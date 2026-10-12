@@ -1,6 +1,6 @@
 {
   "name": "free-games-bot",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "description": "Free games bot for discord",
   "main": "src/index.ts",
   "type": "module",
