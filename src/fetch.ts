@@ -1,29 +1,26 @@
-import * as Utils from "./utils.ts";
-import { FetchError, FetchResult, type FreeGames } from "./store.ts";
 import {
     EmbedBuilder,
     type APIEmbedField,
     type ColorResolvable,
-    type TextBasedChannel,
 } from "discord.js";
-import { itadStore } from "./stores/isThereAnyDeals.ts";
 import { addGameIdsToDb } from "./db.ts";
+import { FetchError, FetchResult, itad, type FreeGames } from "./store.ts";
+import * as Utils from "./utils.ts";
 
-const stores = [itadStore];
 const gamesAvailableColor: ColorResolvable = "#57F287";
 const noGamesAvailableColor: ColorResolvable = "#FEE75C";
 const errorColor: ColorResolvable = "#ED4245";
 
-function extractGamesAndErrors(
-    fetchResults: PromiseFulfilledResult<FetchResult | FetchError>[]
-): { games: FreeGames; errors: FetchError[] } {
+function extractGamesAndErrors(fetchResults: Array<FetchResult | FetchError>): {
+    games: FreeGames;
+    errors: FetchError[];
+} {
     return fetchResults.reduce<{ games: FreeGames; errors: FetchError[] }>(
-        (acc, r) => {
-            const value = r.value;
-            if ("error" in value) {
-                acc.errors.push(value);
+        (acc, res) => {
+            if ("error" in res) {
+                acc.errors.push(res);
             } else {
-                for (const game of value.games) {
+                for (const game of res.games) {
                     acc.games.push(game);
                 }
             }
@@ -34,45 +31,13 @@ function extractGamesAndErrors(
 }
 
 /**
- * Fetch free games from all sources and returns the message to send in discord
  * @returns The EmbedBuilder first, then the number of giveaways total, or -1 if it is a error message.
  */
-export async function fetchAll(
-    includeAlreadyNotified = false
-): Promise<[EmbedBuilder, number]> {
-    // Calling each stores
-    const fetchPromises = stores.map((store) =>
-        store.fetch(includeAlreadyNotified)
-    );
-
-    // Merging each stores responses
-    let fetchResults: PromiseFulfilledResult<FetchResult | FetchError>[] = [];
-    try {
-        const promisesResults = await Promise.allSettled(fetchPromises);
-        fetchResults = promisesResults.filter(
-            (p) => p.status === "fulfilled"
-        ) as PromiseFulfilledResult<FetchResult | FetchError>[];
-    } catch (error) {
-        Utils.logError("Error while fetching games", error);
-        try {
-            return [
-                new EmbedBuilder()
-                    .setColor(errorColor)
-                    .setTitle("🎮 Free games bot 🎮")
-                    .setDescription("💥 Error fetching games 💥")
-                    .setDescription("See bot's server logs for details")
-                    .setTimestamp(),
-                -1,
-            ];
-        } catch (error2) {
-            Utils.logError(
-                "Error while replying with an error message",
-                error2
-            );
-        }
-    }
-
-    const { games, errors } = extractGamesAndErrors(fetchResults);
+function generateMessageAndSaveNotifications(
+    fetchResults: FetchResult | FetchError,
+    includeAlreadyNotified: boolean
+): [EmbedBuilder, number] {
+    const { games, errors } = extractGamesAndErrors([fetchResults]);
 
     if (!includeAlreadyNotified) addGameIdsToDb(games.map((g) => g.id));
 
@@ -106,7 +71,7 @@ export async function fetchAll(
         );
         return {
             name: game.name,
-            value: `[🎁 Redeem game 🎁](${game.url})\n⏳ Expires : <t:${expiryTimestamp}:F> (<t:${expiryTimestamp}:R>)`,
+            value: `[🎁 Redeem game (${game.shop}) 🎁](${game.url})\n⏳ Expires : <t:${expiryTimestamp}:F> (<t:${expiryTimestamp}:R>)`,
             inline: false,
         };
     });
@@ -121,4 +86,30 @@ export async function fetchAll(
     embed.addFields(embedFields);
 
     return [embed, games.length];
+}
+
+/**
+ * Fetch free games from all sources and returns the message to send in discord
+ * @returns The EmbedBuilder first, then the number of giveaways total, or -1 if it is a error message.
+ */
+export async function fetchAll(
+    includeAlreadyNotified = false
+): Promise<[EmbedBuilder, number]> {
+    try {
+        return generateMessageAndSaveNotifications(
+            await itad.fetch(includeAlreadyNotified),
+            includeAlreadyNotified
+        );
+    } catch (error) {
+        Utils.logError("Error while fetching games", error);
+        return [
+            new EmbedBuilder()
+                .setColor(errorColor)
+                .setTitle("🎮 Free games bot 🎮")
+                .setDescription("💥 Error fetching games 💥")
+                .setDescription("See bot's server logs for details")
+                .setTimestamp(),
+            -1,
+        ];
+    }
 }
