@@ -17,13 +17,6 @@ if (!fs.existsSync(configPath)) {
     fs.copyFileSync('../free-games-bot.empty.json', configPath);
 }
 
-export type ChannelScedule = {
-    id: string;
-    schedule: string;
-}
-
-export type GuildSchedule = Array<string | ChannelScedule>
-
 export type ConfigObject = {
     /**
      * command prefix
@@ -48,7 +41,7 @@ export type ConfigObject = {
      *  "7": ["90"]
      * }
      */
-    guilds: { [guildId: string]: GuildSchedule };
+    guilds: { [guildId: string]: string[] };
     dev?: boolean;
 }
 

@@ -1,7 +1,6 @@
 import * as Utils from "./utils.ts";
 import { config } from "./config.ts";
 import {
-    ChannelType,
     Client,
     type ClientOptions,
     Collection,
@@ -35,46 +34,12 @@ export class BotClient extends Client {
     }
 }
 
-async function initialScheduleChannel(
-    guildId: string,
-    channelId: string,
-    client: BotClient
-): Promise<void> {
-    if (!channelId) return;
-    Utils.log(`Scheduling for ${guildId}#${channelId}`);
-    const channel = await client.channels.fetch(channelId);
-    if (!channel) {
-        Utils.log(`No channel found for ${guildId}#${channelId}`);
+async function initialScheduleChannels(client: BotClient): Promise<void> {
+    if (!config.guilds) {
+        Utils.log("No guilds configured : nothing to schedule");
         return;
     }
-    if (!channel) {
-        Utils.log(`Channel ${guildId}#${channelId} not found`);
-        return;
-    } else if (channel.type !== ChannelType.GuildText) {
-        Utils.log(`Channel ${guildId}#${channelId} is not a text channel`);
-        return;
-    }
-    await doSchedule(channel);
-}
-
-async function initialScheduleChannelsForGuild(
-    guildId: string,
-    client: BotClient
-): Promise<void> {
-    const channelIdsToSchedule = config.guilds[guildId];
-    if (!Array.isArray(channelIdsToSchedule) || channelIdsToSchedule.length < 1)
-        return;
-    for (const channelId of channelIdsToSchedule) {
-        if (typeof channelId === "string") {
-            await initialScheduleChannel(guildId, channelId, client);
-        } else {
-            await initialScheduleChannel(
-                guildId,
-                channelId.id,
-                client,
-            );
-        }
-    }
+    await doSchedule(client);
 }
 
 let currentlyCleaningUp = false;
@@ -98,13 +63,7 @@ registerCommands().then(async (commands) => {
 
     client.on("ready", async () => {
         Utils.log(`Logged in as ${client.user?.tag}!`);
-      if (!config.guilds) {
-        Utils.log("No guilds configured");
-        return;
-      }
-        for (const guildId in config.guilds) {
-            await initialScheduleChannelsForGuild(guildId, client);
-        }
+        await initialScheduleChannels(client);
     });
 
     client.on("interactionCreate", async (interaction) => {

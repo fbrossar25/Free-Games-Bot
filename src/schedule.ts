@@ -1,12 +1,13 @@
-import { type TextBasedChannel, TextChannel } from "discord.js";
+import { type TextChannel, ChannelType } from "discord.js";
 import * as Scheduler from "node-schedule";
 import { fetchAll } from "./fetch.ts";
 import * as Utils from "./utils.ts";
 import { config } from "./config.ts";
+import type { BotClient } from "./index.ts";
 
 const jobs = new Map<string, Scheduler.Job>();
 
-export function nextSchedule(channel: TextBasedChannel): string {
+export function nextSchedule(channel: TextChannel): string {
     let date = null;
     if (jobs.has(channel.id)) {
         date = jobs.get(channel.id)?.nextInvocation();
@@ -23,15 +24,42 @@ export function nextSchedule(channel: TextBasedChannel): string {
 /**
  * @param channel
  */
-export async function executeFetchJob(channel: TextChannel) {
-    Utils.log(
-        `Scheduled job : Fetching games for channel ${channel.guild.name}#${channel.name} (${channel.guild.id}#${channel.id})`
-    );
+export async function executeFetchJob(client: BotClient) {
+    const channels: TextChannel[] = [];
+    for (const guildId in config.guilds) {
+        for (const channelId of config.guilds[guildId]) {
+            if (!channelId) continue;
+            Utils.log(`Searching channel ${guildId}#${channelId}`);
+            const channel = await client.channels.fetch(channelId);
+            if (!channel) {
+                Utils.log(`Channel ${guildId}#${channelId} not found`);
+                continue;
+            } else if (channel.type !== ChannelType.GuildText) {
+                Utils.log(
+                    `Channel ${guildId}#${channelId} is not a text channel`
+                );
+                continue;
+            }
+            channels.push(channel);
+        }
+    }
     try {
         const [embed, n] = await fetchAll();
         if (n !== 0) {
-            // Juste send notifications when there is something new to notify
-            await channel.send({ content: "@everyone", embeds: [embed], allowedMentions: { parse: [ "everyone" ] } });
+            Utils.log(`Notifying ${channels.length} channels`);
+            // Just send notifications when there is something new to notify
+            for (const channel of channels) {
+                Utils.log(
+                    `Scheduled job : Sending games for channel ${channel.guild.name}#${channel.name} (${channel.guild.id}#${channel.id})`
+                );
+                await channel.send({
+                    content: "@everyone",
+                    embeds: [embed],
+                    allowedMentions: { parse: ["everyone"] },
+                });
+            }
+        } else {
+            Utils.log(`Nothing new to notify`);
         }
     } catch (error) {
         Utils.logError("Error while replying", error);
@@ -50,27 +78,21 @@ if (config.dev) {
 /**
  *
  * @param rule The cron or SimpleRule to schedule
- * @param channel
  * @returns next schedule message
  */
-export async function doSchedule(channel: TextChannel) {
-    let job = jobs.get(channel.id);
+export async function doSchedule(client: BotClient) {
+    let job = jobs.get("scheduled-notifications");
     if (job) {
         job.cancel();
     }
-    job = Scheduler.scheduleJob(rule, () => executeFetchJob(channel));
-    const guild =
-        (await channel.client.guilds?.fetch(channel.guildId)) ?? "<unknown>";
-    const guildName = guild.name;
+    job = Scheduler.scheduleJob(rule, () => executeFetchJob(client));
     if (job) {
-        jobs.set(channel.id, job);
+        jobs.set("scheduled-notifications", job);
         Utils.log(
-            `Scheduled notification on ${guildName}#${channel.name} (${channel.guildId}#${channel.id}), next one on ${Utils.getDateString(job.nextInvocation() ?? undefined)}`
+            `Scheduled notification, next one on ${Utils.getDateString(job.nextInvocation() ?? undefined)}`
         );
     } else {
-        Utils.log(
-            `Unable to schedule notification on ${guildName}#${channel.name} (${channel.guildId}#${channel.id})`
-        );
+        Utils.log(`Unable to schedule notification`);
         return;
     }
 }

@@ -1,6 +1,6 @@
 # Free-Games-Bot
 
-Bot for discord that fetch free games with a schelued tasks using cron expression or simple weekly recurency rule based on D:HH:MM format and posting into specified channels.
+Bot for discord that fetch free games with a schelduled tasks that runs multiple times every day (not at night, because sleeping is nice).
 
 ## Installation
 ```bash

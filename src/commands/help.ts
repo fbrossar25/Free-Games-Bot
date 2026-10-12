@@ -7,7 +7,7 @@ export const help = {
     "Where command is one of :",
     "- `fetch` : fetch and display free games, main command of this bot",
     "- `ping` : Will show obi wan kenobi",
-    "- `help` : Show help about a specific command. Example : `/help next`",
+    "- `help` : Show help about a specific command. Example : `/help fetch`",
     "- `usage` : Show this list of usable commands",
     "- `about` : Show bot's version and timezone",
     "If neither command nor sources are provided, will show free games list. To know more : `/help`"
@@ -22,10 +22,6 @@ export const help = {
     "usage : `/help [command]`",
     "Where command is a command name known by the bot.",
     "To know more commands : `/usage`"
-  ],
-  cancel: [
-    "Cancel any periodic notifications on this channel",
-    "usage : `/cancel`"
   ],
   ping: [
     "Will show obi wan kenobi",
