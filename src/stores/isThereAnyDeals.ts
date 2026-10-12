@@ -1,6 +1,6 @@
 import { Store } from "../store.ts";
 import { config } from "../config.ts";
-import { getGameIdsFromDb, addGameIdsToDb } from "../db.ts";
+import { getGameIdsFromDb } from "../db.ts";
 
 // From API https://api.isthereanydeal.com/service/shops/map/v1
 // 3 - Amazon
@@ -82,7 +82,7 @@ const parseApiResponse = (
         .flat();
     if (includesAlreadyNotified) return giveaways;
     const notifiedIds = getGameIdsFromDb();
-    return giveaways.filter((g) => !notifiedIds.has(g.id));
+    return giveaways.filter((g) => !notifiedIds.includes(g.id));
 };
 
 export const itadStore = new Store<ITADGame, ITADAPIResponseData>(

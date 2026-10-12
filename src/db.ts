@@ -21,18 +21,18 @@ if (!fs.existsSync(configDir)) {
     throw new Error(`Config dir ${configDir} does not exists.`);
 }
 
-let _db: { alreadyNotifiedGameIds: Set<number> };
+let _db: { alreadyNotifiedGameIds: number[] };
 let dbInit = false;
 
 function readDb() {
     Utils.log(`Reading ${dbPath}`);
     if (!fs.existsSync(dbPath)) {
-        _db = { alreadyNotifiedGameIds: new Set<number>() };
+        _db = { alreadyNotifiedGameIds: [] };
         return;
     }
     const content = JSON.parse(fs.readFileSync(dbPath, "utf8"));
     if (isValidContent(content)) {
-        _db = { alreadyNotifiedGameIds: new Set<number>(content) };
+        _db = { alreadyNotifiedGameIds: content };
         return;
     }
     throw new Error(`Invalid DB content, check ${dbPath} or remove it.`);
@@ -47,11 +47,12 @@ function writeDb() {
 
 if (!dbInit) readDb();
 
-export function getGameIdsFromDb(): Set<number> {
-    return _db?.alreadyNotifiedGameIds ?? new Set<number>();
+export function getGameIdsFromDb(): number[] {
+    return _db?.alreadyNotifiedGameIds ?? [];
 }
 
 export function addGameIdsToDb(ids: number[]) {
-    for (const id of ids) _db.alreadyNotifiedGameIds.add(id);
+    _db.alreadyNotifiedGameIds.push(...ids);
+    if (ids.length > 50) ids.splice(0, ids.length - 50);
     writeDb();
 }
