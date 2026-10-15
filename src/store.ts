@@ -1,7 +1,7 @@
 import * as Utils from "./utils.ts";
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import { config } from "./config.ts";
-import { getGameIdsFromDb } from "./db.ts";
+import { addGiveawaysIdsToDb, getGiveawaysIdsFromDb } from "./db.ts";
 
 // From API https://api.isthereanydeal.com/service/shops/map/v1
 // 3 - Amazon
@@ -15,8 +15,16 @@ import { getGameIdsFromDb } from "./db.ts";
 // 62 - Ubisoft Store
 /** List of shop ids to include in discord messages, giveways from other shops are filtered out */
 const ITADShopsId = [3, 4, 16, 35, 37, 48, 52, 60, 61, 62];
+/** ITADGame.tags */
+const f2pTag = "Free to Play";
+
+type ITADGame = {
+    id: string;
+    tags: string[];
+};
 
 type ITADGiveaway = {
+    /** Id of the giveaway */
     id: number;
     title: string;
     shop?: {
@@ -31,6 +39,7 @@ type ITADGiveaway = {
     expiry: string;
     note: string;
     games: {
+        /** UUID of the game, corresponds to the id field of {@link ITADGame} */
         id: string;
         slug: string;
         title: string;
@@ -39,12 +48,14 @@ type ITADGiveaway = {
     }[];
 };
 
-export type ITADAPIResponseData = ITADGiveaway[];
+export type ITADGiveaways = ITADGiveaway[];
 
 /** Description of a free game */
 export type FreeGame = {
     /** unique id for giveaway */
     id: number;
+    /** UUID of the game, corresponds to the id field of {@link ITADGame} */
+    gameId: string;
     /** Human-friendly name of the game */
     name: string;
     /** Shop name where to redeem the game (e.g. Steam, Epic Games Store) */
@@ -81,16 +92,20 @@ export class FetchResult {
 /** Store where to look for free games */
 class IsThereAnyDeal {
     public url = "https://api.isthereanydeal.com/giveaways/v1";
+    public urlDetail = "https://api.isthereanydeal.com/games/info/v2";
     public queryParams = { key: config.isThereAnyDealsAPIKey };
 
-    public callUrl(): Promise<AxiosResponse<ITADAPIResponseData>> {
+    public fetchGiveaways(): Promise<AxiosResponse<ITADGiveaways>> {
         Utils.log(`[IsThereAnyDeal] Calling ${this.url}`);
-        if (this.queryParams) {
-            return axios.get<ITADAPIResponseData>(this.url, {
-                params: this.queryParams,
-            });
-        }
-        return axios.get<ITADAPIResponseData>(this.url);
+        return axios.get<ITADGiveaways>(this.url, {
+            params: this.queryParams,
+        });
+    }
+
+    public fetchGameInfo(id: ITADGame["id"]) {
+        return axios.get<ITADGame>(this.urlDetail, {
+            params: { ...this.queryParams, id: id },
+        });
     }
 
     /**
@@ -98,10 +113,10 @@ class IsThereAnyDeal {
      * Note: This is a simple implementation that parses the XML string directly.
      * The URL extraction logic is simplified for testing purposes.
      */
-    parseApiResponse(
-        response: ITADAPIResponseData,
+    async parseApiResponse(
+        response: ITADGiveaways,
         includesAlreadyNotified: boolean
-    ): FreeGames {
+    ) {
         if (!Array.isArray(response)) {
             return [];
         }
@@ -116,6 +131,7 @@ class IsThereAnyDeal {
                     .filter((g) => g.type === "game")
                     .map((g) => ({
                         id: item.id,
+                        gameId: g.id,
                         url: item.url,
                         name: g.title,
                         shop: item.shop?.name ?? "",
@@ -123,9 +139,43 @@ class IsThereAnyDeal {
                     }))
             )
             .flat();
-        if (includesAlreadyNotified) return giveaways;
-        const notifiedIds = getGameIdsFromDb();
-        return giveaways.filter((g) => !notifiedIds.includes(g.id));
+        if (!includesAlreadyNotified) {
+            giveaways = giveaways.filter((g) => !notifiedIds.includes(g.id));
+            const notifiedIds = getGiveawaysIdsFromDb();
+        }
+        const ignoredGivewaysIds: number[] = [];
+        for (let i = 0; i < giveaways.length; i++) {
+            const isF2P = await this.isF2P(giveaways[i]);
+            // include the giveaway by default
+            if (!(isF2P instanceof FetchError) && isF2P) {
+                giveaways.splice(i, 1);
+                ignoredGivewaysIds.push(giveaways[i].id);
+            }
+        }
+        addGiveawaysIdsToDb(ignoredGivewaysIds);
+
+        return giveaways;
+    }
+
+    async isF2P(game: FreeGame): Promise<boolean | FetchError> {
+        Utils.log(`[IsThereAnyDeal] searching details for game ${game.gameId}`);
+        try {
+            const info = await this.fetchGameInfo(game.gameId);
+            return info.data.tags.includes(f2pTag);
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                Utils.logError(
+                    `[IsThereAnyDeal] Error ${error.response?.status ?? "<unknown status>"}`,
+                    error
+                );
+            } else {
+                Utils.logError(`[IsThereAnyDeal] Unknown error`, error);
+            }
+            return new FetchError(
+                "itad",
+                `[IsThereAnyDeal] Cannot fetch game infos of ${game.gameId} (see logs)`
+            );
+        }
     }
 
     /**
@@ -134,9 +184,9 @@ class IsThereAnyDeal {
     public async fetch(
         includesAlreadyNotified = false
     ): Promise<FetchResult | FetchError> {
-        let response: AxiosResponse<ITADAPIResponseData>;
+        let response: AxiosResponse<ITADGiveaways>;
         try {
-            response = await this.callUrl();
+            response = await this.fetchGiveaways();
         } catch (error) {
             if (error instanceof AxiosError) {
                 Utils.logError(
@@ -162,10 +212,11 @@ class IsThereAnyDeal {
                     `No data in axios response:\n${JSON.stringify(response, null, 4)}`
                 );
             }
-            const freeGames = this.parseApiResponse(
+            const freeGames = await this.parseApiResponse(
                 response.data,
                 includesAlreadyNotified
             );
+
             Utils.log(
                 `[IsThereAnyDeal] ${freeGames.length} free games found from response`
             );

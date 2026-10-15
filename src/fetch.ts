@@ -3,7 +3,7 @@ import {
     type APIEmbedField,
     type ColorResolvable,
 } from "discord.js";
-import { addGameIdsToDb } from "./db.ts";
+import { addGiveawaysIdsToDb } from "./db.ts";
 import { FetchError, FetchResult, itad, type FreeGames } from "./store.ts";
 import * as Utils from "./utils.ts";
 
@@ -39,7 +39,7 @@ function generateMessageAndSaveNotifications(
 ): [EmbedBuilder, number] {
     const { games, errors } = extractGamesAndErrors([fetchResults]);
 
-    if (!includeAlreadyNotified) addGameIdsToDb(games.map((g) => g.id));
+    if (!includeAlreadyNotified) addGiveawaysIdsToDb(games.map((g) => g.id));
 
     if (games.length === 0 && errors.length === 0) {
         return [

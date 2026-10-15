@@ -47,11 +47,11 @@ function writeDb() {
 
 if (!dbInit) readDb();
 
-export function getGameIdsFromDb(): number[] {
+export function getGiveawaysIdsFromDb(): number[] {
     return _db?.alreadyNotifiedGameIds ?? [];
 }
 
-export function addGameIdsToDb(ids: number[]) {
+export function addGiveawaysIdsToDb(ids: number[]) {
     _db.alreadyNotifiedGameIds.push(...ids);
     if (ids.length > 50) ids.splice(0, ids.length - 50);
     writeDb();
