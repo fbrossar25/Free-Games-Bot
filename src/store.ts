@@ -140,8 +140,8 @@ class IsThereAnyDeal {
             )
             .flat();
         if (!includesAlreadyNotified) {
-            giveaways = giveaways.filter((g) => !notifiedIds.includes(g.id));
             const notifiedIds = getGiveawaysIdsFromDb();
+            giveaways = giveaways.filter((g) => !notifiedIds.includes(g.id));
         }
         const ignoredGivewaysIds: number[] = [];
         for (let i = 0; i < giveaways.length; i++) {
