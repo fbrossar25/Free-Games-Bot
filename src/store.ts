@@ -144,17 +144,19 @@ class IsThereAnyDeal {
             giveaways = giveaways.filter((g) => !notifiedIds.includes(g.id));
         }
         const ignoredGivewaysIds: number[] = [];
-        for (let i = 0; i < giveaways.length; i++) {
-            const isF2P = await this.isF2P(giveaways[i]);
+        const nonF2PGiveaways: FreeGames = [];
+        for (const giveaway of giveaways) {
+            const isF2P = await this.isF2P(giveaway);
             // include the giveaway by default
-            if (!(isF2P instanceof FetchError) && isF2P) {
-                giveaways.splice(i, 1);
-                ignoredGivewaysIds.push(giveaways[i].id);
+            if (!(isF2P instanceof FetchError) && !isF2P) {
+                nonF2PGiveaways.push(giveaway);
+            } else {
+                ignoredGivewaysIds.push(giveaway.id);
             }
         }
         addGiveawaysIdsToDb(ignoredGivewaysIds);
 
-        return giveaways;
+        return nonF2PGiveaways;
     }
 
     async isF2P(game: FreeGame): Promise<boolean | FetchError> {
@@ -209,7 +211,7 @@ class IsThereAnyDeal {
             }
             if (!response.data) {
                 throw new Error(
-                    `No data in axios response:\n${JSON.stringify(response, null, 4)}`
+                    `No data in axios response:\n${JSON.stringify(response.data, null, 4)}`
                 );
             }
             const freeGames = await this.parseApiResponse(
@@ -223,7 +225,7 @@ class IsThereAnyDeal {
             return { games: freeGames };
         } catch (error) {
             Utils.logError(
-                `[IsThereAnyDeal] Error while checking free games`,
+                `[IsThereAnyDeal] Error while checking free games. Response :\n${JSON.stringify(response.data, null, 4)}`,
                 error
             );
             return new FetchError(
