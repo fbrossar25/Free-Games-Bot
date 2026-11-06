@@ -53,9 +53,7 @@ export async function executeFetchJob(client: BotClient) {
                     `Scheduled job : Sending games for channel ${channel.guild.name}#${channel.name} (${channel.guild.id}#${channel.id})`
                 );
                 await channel.send({
-                    content: "@everyone",
                     embeds: [embed],
-                    allowedMentions: { parse: ["everyone"] },
                 });
             }
         } else {

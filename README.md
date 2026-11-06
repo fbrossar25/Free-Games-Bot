@@ -22,7 +22,6 @@ This bots needs those permissions in order to work properly :
  - Send messages
  - Embed link
  - Read messages history
- - Mention everyone
 
 
 ## Usage
